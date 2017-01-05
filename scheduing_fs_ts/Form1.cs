@@ -25,7 +25,7 @@ namespace scheduing_fs_ts
                 public int start;
                 //public int pause;
         };
-        public List<task> tasks;
+        private List<task> tasks = new List<task>();
 
         struct pause
         {
@@ -34,43 +34,35 @@ namespace scheduing_fs_ts
             public int p_duration;
 
         };
-        List<pause> pauses;
+         private List<pause> pauses = new List<pause>();
 
         public void task_generator()
         {
             for (int i = 0; i < N; i++)//N liczba  zadan
             {
                 task new_task = new task();
-                //new_task.start = rnd.Next(0 ,30); //rozpoczecie na tamtych zasadach najpierw trzeba zssumować wszystko
                 new_task.maszyna_op1 = 1;
                 new_task.maszyna_op2 = 2;
-                new_task.duration_op1 = rnd.Next(1, 50);//tu do zmiany w zależności od 'klasy instancji'
-                new_task.duration_op2 = rnd.Next(1, 50);
+                if(i % 2 == 0)
+                {
+                    new_task.duration_op1 = rnd.Next(1, 200);
+                    new_task.duration_op2 = rnd.Next(1, 200);
+                }
+                else
+                {
+                    new_task.duration_op1 = rnd.Next(1, 50);
+                    new_task.duration_op2 = rnd.Next(1, 50);
+                }
+                
                 time_mach1 += new_task.duration_op1;
                 time_mach2 += new_task.duration_op2;
                 if (i <= N/2)
                 {
                     new_task.start = 0;
-                    //ile powinien wynosić stop?
-                    //new_task.pause = new_task.duration_op1 + new_task.duration_op1 + 10;//ile czasu zeby skonczyc???
                 }
-               /* else { 
-                        }*/
+               
                 tasks.Add(new_task);
 
-
-                /* if (tasks[i].maszyna_op1 == 1)
-                {
-                    tasks[i].maszyna_op2 = 2;
-                    time1 += tasks[i].duration_op1;
-                    time2 += tasks[i].duration_op2;
-                }
-                else
-                {
-                    tasks[i].maszyna_op2 = 1;
-                    time2 += tasks[i].duration_op1;
-                    time1 += tasks[i].duration_op2;
-                }*/
 
             }
 
@@ -82,14 +74,12 @@ namespace scheduing_fs_ts
                 temp_task.duration_op1 = tasks[j].duration_op1;
                 temp_task.duration_op2 = tasks[j].duration_op2;
                 temp_task.start = rnd.Next(1, (time_mach1 + time_mach2) * 1 / 4);
-                //temp_task.pause = rnd.Next(temp_task.start, temp_task.duration_op1 + temp_task.duration_op2 + 10);//to jest do wymyslenia
                 tasks[j] = temp_task;
             }
         }
         public void pause_generator()
         {
-            int pause_number = rnd.Next(N/5,N);//jaka górna granica liczby przestojów?
-            //a = pause_number;
+            int pause_number = rnd.Next(N/5,N);
             for (int i = 0; i < pause_number; i++)
             {
                 pause temp_pause = new pause();
@@ -97,10 +87,7 @@ namespace scheduing_fs_ts
                 temp_pause.p_start = rnd.Next(1, time_mach1 - temp_pause.p_duration - 1);
                 temp_pause.p_end = temp_pause.p_start + temp_pause.p_duration;
                 pauses.Add(temp_pause);
-                /*pauses[i].p_end = 0;
-                pauses[i].p_start = pauses[i].p_end + rand() % (time1 - 100) + 10;
-                pauses[i].p_duration = rand() % 20 + 1;
-                pauses[i].p_end = pauses[i].p_start + pauses[i].p_duration;*/
+                
             }
         }
 
@@ -113,6 +100,22 @@ namespace scheduing_fs_ts
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Int32.TryParse(textBox1.Text, out N);
+            task_generator();
+            pause_generator();
+            foreach (task taskk in tasks)
+            {
+                System.Console.WriteLine("OP1 TIME :{0} OP2 TIME :{1} START TIME:{2}", taskk.duration_op1 , taskk.duration_op2,taskk.start );
+            }
+            foreach (pause pausee in pauses)
+            {
+                System.Console.WriteLine("PAUSE START :{0} PAUSE END :{1} PAUSE DURATION:{2}", pausee.p_start, pausee.p_end, pausee.p_duration);
+            }
 
         }
     }
