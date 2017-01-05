@@ -23,7 +23,7 @@ namespace scheduing_fs_ts
                 public int duration_op2;
                 public int maszyna_op2;
                 public int start;
-                public int pause;
+                //public int pause;
         };
         public List<task> tasks;
 
@@ -52,10 +52,10 @@ namespace scheduing_fs_ts
                 {
                     new_task.start = 0;
                     //ile powinien wynosić stop?
-                    new_task.pause = new_task.duration_op1 + new_task.duration_op1 + 10;//ile czasu zeby skonczyc???
+                    //new_task.pause = new_task.duration_op1 + new_task.duration_op1 + 10;//ile czasu zeby skonczyc???
                 }
-                else { 
-}
+               /* else { 
+                        }*/
                 tasks.Add(new_task);
 
 
@@ -82,7 +82,7 @@ namespace scheduing_fs_ts
                 temp_task.duration_op1 = tasks[j].duration_op1;
                 temp_task.duration_op2 = tasks[j].duration_op2;
                 temp_task.start = rnd.Next(1, (time_mach1 + time_mach2) * 1 / 4);
-                temp_task.pause = rnd.Next(temp_task.start, temp_task.duration_op1 + temp_task.duration_op2 + 10);//to jest do wymyslenia
+                //temp_task.pause = rnd.Next(temp_task.start, temp_task.duration_op1 + temp_task.duration_op2 + 10);//to jest do wymyslenia
                 tasks[j] = temp_task;
             }
         }
