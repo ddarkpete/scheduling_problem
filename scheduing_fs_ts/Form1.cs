@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace scheduing_fs_ts
-{
+{//trzeba zapisać instancje do pliku , potem nawet wczytać!
     public partial class Form1 : Form
     {
+        int instance_nO = 0;
         static int N = 30;
         Random rnd = new Random();
         int time_mach1 = 0;
@@ -26,15 +28,18 @@ namespace scheduing_fs_ts
                 //public int pause;
         };
         private List<task> tasks = new List<task>();
+        private List<List<task>> task_instances = new List<List<task>>();
 
         struct pause
         {
+            public int p_id;
             public int p_start;
             public int p_end;
             public int p_duration;
 
         };
          private List<pause> pauses = new List<pause>();
+         private List<List<pause>> pause_instances = new List<List<pause>>();
 
         public void task_generator()
         {
@@ -76,6 +81,8 @@ namespace scheduing_fs_ts
                 temp_task.start = rnd.Next(1, (time_mach1 + time_mach2) * 1 / 4);
                 tasks[j] = temp_task;
             }
+            task_instances.Add(tasks);
+            tasks.Clear();
         }
         public void pause_generator()
         {
@@ -83,11 +90,33 @@ namespace scheduing_fs_ts
             for (int i = 0; i < pause_number; i++)
             {
                 pause temp_pause = new pause();
+                temp_pause.p_id = i;
                 temp_pause.p_duration = rnd.Next(1, 20);//górna granica czasu?
                 temp_pause.p_start = rnd.Next(1, time_mach1 - temp_pause.p_duration - 1);
                 temp_pause.p_end = temp_pause.p_start + temp_pause.p_duration;
                 pauses.Add(temp_pause);
                 
+            }
+            pause_instances.Add(pauses);
+            pauses.Clear();
+        }
+        private void save(string path)
+        {
+            StreamWriter sr = new StreamWriter(path);
+            for(var i = 0;  i < task_instances.Count; i++)
+            {
+                sr.WriteLine("***{0}***", i);
+                foreach (task taskk in task_instances[i])
+                {
+                    sr.WriteLine("{0};{1};{2};{3};", taskk.duration_op1 , taskk.duration_op2,taskk.maszyna_op1,taskk.maszyna_op2,taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
+                }
+                int x = 0;
+                foreach (pause pausee in pause_instances[i])
+                {
+                    sr.WriteLine("{0};{1};{2};", x, pausee.p_duration, pausee.p_start);
+                    x++;
+                }
+                sr.WriteLine("***EOF***");
             }
         }
 
@@ -116,7 +145,19 @@ namespace scheduing_fs_ts
             {
                 System.Console.WriteLine("PAUSE START :{0} PAUSE END :{1} PAUSE DURATION:{2}", pausee.p_start, pausee.p_end, pausee.p_duration);
             }
+            save_button.Enabled = true;
 
+        }
+
+        private void save_button_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.ShowDialog();
+        }
+
+        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+            string save_file = saveFileDialog1.FileName;
+            save(save_file);
         }
     }
 }
