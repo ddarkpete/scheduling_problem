@@ -14,7 +14,7 @@ namespace scheduing_fs_ts
 //w zapisie bug , poprawiony dla taskow poprawic dla pauz
     public partial class Form1 : Form
     {
-        int instance_nO = 0;
+        //int instance_nO = 0;
         int N = 30;
         Random rnd = new Random();
         int time_mach1 = 0;
@@ -39,7 +39,7 @@ namespace scheduing_fs_ts
             public int p_duration;
 
         };
-         private List<pause> pauses = new List<pause>();
+         //private List<pause> pauses = new List<pause>();
          private List<List<pause>> pause_instances = new List<List<pause>>();
 
         public void task_generator()
@@ -92,6 +92,7 @@ namespace scheduing_fs_ts
         }
         public void pause_generator()
         {
+            List<pause> pauses = new List<pause>();
             int pause_number = rnd.Next(N/5,N);
             for (int i = 0; i < pause_number; i++)
             {
@@ -104,28 +105,28 @@ namespace scheduing_fs_ts
                 
             }
             pause_instances.Add(pauses);
-            pauses.Clear();
+            //pauses.Clear();
         }
         private void save(string path)
         {
             StreamWriter sr = new StreamWriter(path);
-            int i = 0;
-            foreach(List<task> task_list in task_instances)
+            //int i = 0;
+            for(var i = 0; i < task_instances.Count; i++)
             {
                 sr.WriteLine("***{0}***", i);
-                System.Console.WriteLine("{0}", task_list.Count);
-                foreach (task taskk in task_list)
+                //System.Console.WriteLine("{0}", task_list.Count);
+                foreach (task taskk in task_instances[i])
                 {
                     Console.WriteLine("{0};{1};{2};{3};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
                     sr.WriteLine("{0};{1};{2};{3};", taskk.duration_op1 , taskk.duration_op2,taskk.maszyna_op1,taskk.maszyna_op2,taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
                 }
-                i++;
-                //int x = 0;
-                /*foreach (pause pausee in pause_instances[i])
+                
+                int x = 0;
+                foreach (pause pausee in pause_instances[i])
                 {
                     sr.WriteLine("{0};{1};{2};", x, pausee.p_duration, pausee.p_start);
                     x++;
-                }*/
+                }
                 sr.WriteLine("***EOF***");
             }
             sr.Close();
@@ -165,6 +166,15 @@ namespace scheduing_fs_ts
         {
             string save_file = saveFileDialog1.FileName;
             save(save_file);
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar == (char)13)
+            {
+                button1.PerformClick();
+                e.Handled = true;
+            }
         }
     }
 }
