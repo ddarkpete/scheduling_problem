@@ -117,8 +117,8 @@ namespace scheduing_fs_ts
                 //System.Console.WriteLine("{0}", task_list.Count);
                 foreach (task taskk in task_instances[i])
                 {
-                    Console.WriteLine("{0};{1};{2};{3};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
-                    sr.WriteLine("{0};{1};{2};{3};", taskk.duration_op1 , taskk.duration_op2,taskk.maszyna_op1,taskk.maszyna_op2,taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
+                    Console.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
+                    sr.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1 , taskk.duration_op2,taskk.maszyna_op1,taskk.maszyna_op2,taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
                 }
                 
                 int x = 0;
