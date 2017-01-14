@@ -116,17 +116,10 @@ namespace scheduing_fs_ts
             sr.WriteLine("***EOF***");
             sr.Close();
         }
-        public void sort_list()
-        {
-            List<Task> SortedTasks = Tasks.OrderBy(o => o.start).ToList();
-            foreach (Task task in SortedTasks)
-            {
-                taskBox.Text += task.start.ToString() + System.Environment.NewLine;
-            }
-        }
+    
         public void count_time()// JESZCZE NIE OK 
         {
-            
+            SortedTasks = Tasks.OrderBy(o => o.start).ToList();
             int m1_time = 0;
             int m2_time = 0;
             List<bool> end_op1= new List<bool>(); ;
@@ -141,8 +134,9 @@ namespace scheduing_fs_ts
 
             for(int i=0; i<SortedTasks.Count; i++ )
             {
-              //  m1_time += SortedTasks[i].duration_op1; 
-                foreach(Pause pause in Pauses )
+                //  m1_time += SortedTasks[i].duration_op1; 
+                taskBox.Text += m1_time + System.Environment.NewLine;
+                foreach (Pause pause in Pauses )
                 {
                     if(m1_time <= pause.p_start << (m1_time+ SortedTasks[i].duration_op1))
                     {
@@ -193,7 +187,7 @@ namespace scheduing_fs_ts
             textBox1.Text = "";
             time_mach1 = 0;
             time_mach2 = 0;
-            sort_list();//a to nie powinno być przy wprowadzaniu pliku instancji? czy za jednym zamachem generujemy ,
+            count_time();//a to nie powinno być przy wprowadzaniu pliku instancji? czy za jednym zamachem generujemy ,
             //rozwiazujemy i tworzymy plik instancji oraz rozwiązania? chyba powinno być wczytanie instancji tez
             //zeby dr Radom mogl sprawdzic to
         }
