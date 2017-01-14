@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 namespace scheduing_fs_ts
 {//trzeba zapisać instancje do pliku , potem nawet wczytać!
  //w zapisie bug , poprawiony dla taskow poprawic dla pauz
@@ -29,14 +28,13 @@ namespace scheduing_fs_ts
             //public int pause;
         };
         private List<task> tasks = new List<task>();
-
-        struct pause
+        List<task> SortedTasks = new List<task>();
+        public class pause
         {
             public int p_id;
             public int p_start;
             public int p_end;
             public int p_duration;
-
         };
         private List<pause> pauses = new List<pause>();
         public void task_generator()
@@ -66,9 +64,7 @@ namespace scheduing_fs_ts
                 }
 
                 tasks.Add(new_task);
-
             }
-
             for (int j = N / 2 + 1; j < N; j++)
             {
                 task temp_task = new task();
@@ -124,19 +120,73 @@ namespace scheduing_fs_ts
             sr.WriteLine("***EOF***");
             sr.Close();
         }
+        public void sort_list()
+        {
+            List<task> SortedTasks = tasks.OrderBy(o => o.start).ToList();
+            foreach (task task in SortedTasks)
+            {
+                taskBox.Text += task.start.ToString() + System.Environment.NewLine;
+            }
+        }
+        public void count_time()// JESZCZE NIE OK 
+        {
+            
+            int m1_time = 0;
+            int m2_time = 0;
+            List<bool> end_op1= new List<bool>(); ;
+            List<bool> end_op2= new List<bool>(); ;
+            for (int i=0; i<SortedTasks.Count(); i++)
+            {
+                bool a = false;
+                end_op1.Add(a);
+                end_op2.Add(a);
+            }
+
+
+            for(int i=0; i<SortedTasks.Count(); i++ )
+            {
+              //  m1_time += SortedTasks[i].duration_op1; 
+                foreach(pause pause in pauses )
+                {
+                    if(m1_time <= pause.p_start << (m1_time+ SortedTasks[i].duration_op1))
+                    {
+                        int before_pause = pause.p_start - m1_time;
+                        m1_time += before_pause + pause.p_duration + SortedTasks[i].duration_op1;
+
+                    }
+                    else { m1_time += SortedTasks[i].duration_op1; } 
+                }
+                // ACHTUNG
+                // Trzeba wziac pod uwage, ze op2 moze sie zaczac dopiero jak sie skonczy op 1,
+                //a w tym czasie moze wejsc zad 2 na pierwsza maszynke, 
+                //tamto poprzednie moze sie wykonywac normalnie na maszynce drugiej
+                // 2 listy booli wielkosci listy taskow (end_op1 i end_op2), jeden od op1 i drugi od op2, 
+                //zeby zaznaczac go na true jak operacja sie skonczy 
+              /*  foreach (pause pause in pauses)
+                {
+                    
+                    if (m2_time <= pause.p_start << (m2_time + SortedTasks[i].duration_op1))
+                    {
+                        int before_pause = pause.p_start - m2_time;
+                        m2_time += before_pause + pause.p_duration + SortedTasks[i].duration_op1;
+
+                    }
+                    else { m2_time += SortedTasks[i].duration_op1; }
+                }
+                */
+
+            }
 
 
 
+        }
         public Form1()
         {
             InitializeComponent();
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
-
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             Int32.TryParse(textBox1.Text, out N);
@@ -147,20 +197,17 @@ namespace scheduing_fs_ts
             time_mach1 = 0;
             time_mach2 = 0;
             save_button.Enabled = true;
-
+            sort_list();
         }
-
         private void save_button_Click(object sender, EventArgs e)
         {
             saveFileDialog1.ShowDialog();
         }
-
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             string save_file = saveFileDialog1.FileName;
             save(save_file);
         }
-
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)13)
