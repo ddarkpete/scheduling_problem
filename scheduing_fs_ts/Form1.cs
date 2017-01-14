@@ -13,12 +13,12 @@ namespace scheduing_fs_ts
  //w zapisie bug , poprawiony dla taskow poprawic dla pauz
     public partial class Form1 : Form
     {
-        //int instance_nO = 0;
+        int instance_nO = 0;
         int N = 30;
         Random rnd = new Random();
         int time_mach1 = 0;
         int time_mach2 = 0;
-        public class task
+        public class Task
         {
             public int maszyna_op1;
             public int duration_op1;
@@ -27,53 +27,48 @@ namespace scheduing_fs_ts
             public int start;
             //public int pause;
         };
-        private List<task> tasks = new List<task>();
-        List<task> SortedTasks = new List<task>();
-        public class pause
+        private List<Task> Tasks = new List<Task>();
+        List<Task> SortedTasks = new List<Task>();
+        public class Pause
         {
             public int p_id;
             public int p_start;
             public int p_end;
             public int p_duration;
         };
-        private List<pause> pauses = new List<pause>();
+        private List<Pause> Pauses = new List<Pause>();
         public void task_generator()
         {
 
             for (int i = 0; i < N; i++)//N liczba  zadan
             {
-                task new_task = new task();
-                new_task.maszyna_op1 = 1;
-                new_task.maszyna_op2 = 2;
+                Task New_task = new Task();
+                New_task.maszyna_op1 = 1;
+                New_task.maszyna_op2 = 2;
                 if (i % 2 == 0)
                 {
-                    new_task.duration_op1 = rnd.Next(1, 200);
-                    new_task.duration_op2 = rnd.Next(1, 200);
+                    New_task.duration_op1 = rnd.Next(1, 200);
+                    New_task.duration_op2 = rnd.Next(1, 200);
                 }
                 else
                 {
-                    new_task.duration_op1 = rnd.Next(1, 50);
-                    new_task.duration_op2 = rnd.Next(1, 50);
+                    New_task.duration_op1 = rnd.Next(1, 50);
+                    New_task.duration_op2 = rnd.Next(1, 50);
                 }
 
-                time_mach1 += new_task.duration_op1;
-                time_mach2 += new_task.duration_op2;
+                time_mach1 += New_task.duration_op1;
+                time_mach2 += New_task.duration_op2;
                 if (i <= N / 2)
                 {
-                    new_task.start = 0;
+                    New_task.start = 0;
                 }
 
-                tasks.Add(new_task);
+                Tasks.Add(New_task);
             }
             for (int j = N / 2 + 1; j < N; j++)
             {
-                task temp_task = new task();
-                temp_task.maszyna_op1 = 1;
-                temp_task.maszyna_op2 = 2;
-                temp_task.duration_op1 = tasks[j].duration_op1;
-                temp_task.duration_op2 = tasks[j].duration_op2;
-                temp_task.start = rnd.Next(1, (time_mach1 + time_mach2) * 1 / 4);
-                tasks[j] = temp_task;
+                Tasks[j].start = rnd.Next(1, (time_mach1 + time_mach2) * 1 / 4);
+                
             }
             //buffer_task = tasks;
             /*     task_instances.Add(tasks);
@@ -87,12 +82,12 @@ namespace scheduing_fs_ts
             int pause_number = rnd.Next(N / 5, N);
             for (int i = 0; i < pause_number; i++)
             {
-                pause temp_pause = new pause();
-                temp_pause.p_id = i;
-                temp_pause.p_duration = rnd.Next(1, 20);//górna granica czasu?
-                temp_pause.p_start = rnd.Next(1, time_mach1 - temp_pause.p_duration - 1);
-                temp_pause.p_end = temp_pause.p_start + temp_pause.p_duration;
-                pauses.Add(temp_pause);
+                Pause Temp_pause = new Pause();
+                Temp_pause.p_id = i;
+                Temp_pause.p_duration = rnd.Next(1, 20);//górna granica czasu?
+                Temp_pause.p_start = rnd.Next(1, time_mach1 - Temp_pause.p_duration - 1);
+                Temp_pause.p_end = Temp_pause.p_start + Temp_pause.p_duration;
+                Pauses.Add(Temp_pause);
 
             }
 
@@ -100,9 +95,10 @@ namespace scheduing_fs_ts
         private void save(string path)
         {
             StreamWriter sr = new StreamWriter(path);
-            sr.WriteLine("*** TU NUMER ***"); //tu numer instancj8i zrob PIt
-
-            foreach (task taskk in tasks)
+            sr.WriteLine("***{0}***",instance_nO); //tu numer instancj8i zrob PIt
+            instance_nO++;
+            sr.WriteLine("{0}", Tasks.Count);
+            foreach (Task taskk in Tasks)
             {
                 Console.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
                 sr.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
@@ -110,8 +106,8 @@ namespace scheduing_fs_ts
             }
 
             int x = 0;
-
-            foreach (pause pause in pauses)
+            sr.WriteLine("{0}", Pauses.Count);
+            foreach (Pause pause in Pauses)
             {
                 sr.WriteLine("{0};{1};{2};", x, pause.p_duration, pause.p_start);
                 x++;
@@ -122,8 +118,8 @@ namespace scheduing_fs_ts
         }
         public void sort_list()
         {
-            List<task> SortedTasks = tasks.OrderBy(o => o.start).ToList();
-            foreach (task task in SortedTasks)
+            List<Task> SortedTasks = Tasks.OrderBy(o => o.start).ToList();
+            foreach (Task task in SortedTasks)
             {
                 taskBox.Text += task.start.ToString() + System.Environment.NewLine;
             }
@@ -143,10 +139,10 @@ namespace scheduing_fs_ts
             }
 
 
-            for(int i=0; i<SortedTasks.Count(); i++ )
+            for(int i=0; i<SortedTasks.Count; i++ )
             {
               //  m1_time += SortedTasks[i].duration_op1; 
-                foreach(pause pause in pauses )
+                foreach(Pause pause in Pauses )
                 {
                     if(m1_time <= pause.p_start << (m1_time+ SortedTasks[i].duration_op1))
                     {
@@ -193,27 +189,26 @@ namespace scheduing_fs_ts
             task_generator();
             pause_generator();
             //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
+            saveFileDialog1.ShowDialog();
             textBox1.Text = "";
             time_mach1 = 0;
             time_mach2 = 0;
-            save_button.Enabled = true;
-            sort_list();
+            sort_list();//a to nie powinno być przy wprowadzaniu pliku instancji? czy za jednym zamachem generujemy ,
+            //rozwiazujemy i tworzymy plik instancji oraz rozwiązania? chyba powinno być wczytanie instancji tez
+            //zeby dr Radom mogl sprawdzic to
         }
-        private void save_button_Click(object sender, EventArgs e)
-        {
-            saveFileDialog1.ShowDialog();
-        }
+        
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             string save_file = saveFileDialog1.FileName;
             save(save_file);
         }
-        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)//mozna wpisywac liczbe zadan i enter
         {
             if (e.KeyChar == (char)13)
             {
                 button1.PerformClick();
-                e.Handled = true;
+                e.Handled = true;//nie ma dzwieku po enterze
             }
         }
     }
