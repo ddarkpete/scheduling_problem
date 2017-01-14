@@ -122,15 +122,13 @@ namespace scheduing_fs_ts
             SortedTasks = Tasks.OrderBy(o => o.start).ToList();
             int m1_time = 0;
             int m2_time = 0;
-            List<bool> end_op1= new List<bool>(); ;
-            List<bool> end_op2= new List<bool>(); ;
-            for (int i=0; i<SortedTasks.Count(); i++)
+            List<bool> end_op1= new List<bool>(); 
+            List<bool> end_op2= new List<bool>(); 
+            for (int i=0; i<SortedTasks.Count; i++)
             {
-                bool a = false;
-                end_op1.Add(a);
-                end_op2.Add(a);
+                end_op1.Add(false);
+                end_op2.Add(false);
             }
-
 
             for(int i=0; i<SortedTasks.Count; i++ )
             {
@@ -142,9 +140,10 @@ namespace scheduing_fs_ts
                     {
                         int before_pause = pause.p_start - m1_time;
                         m1_time += before_pause + pause.p_duration + SortedTasks[i].duration_op1;
-
+                   
                     }
-                    else { m1_time += SortedTasks[i].duration_op1; } 
+                    else { m1_time += SortedTasks[i].duration_op1;
+                        break;  } 
                 }
                 // ACHTUNG
                 // Trzeba wziac pod uwage, ze op2 moze sie zaczac dopiero jak sie skonczy op 1,
