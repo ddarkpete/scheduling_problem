@@ -33,6 +33,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.taskBox = new System.Windows.Forms.TextBox();
+            this.load_button = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // textBox1
@@ -74,11 +76,26 @@
             this.taskBox.Size = new System.Drawing.Size(258, 239);
             this.taskBox.TabIndex = 4;
             // 
+            // load_button
+            // 
+            this.load_button.Location = new System.Drawing.Point(294, 99);
+            this.load_button.Name = "load_button";
+            this.load_button.Size = new System.Drawing.Size(125, 83);
+            this.load_button.TabIndex = 5;
+            this.load_button.Text = "Load instance";
+            this.load_button.UseVisualStyleBackColor = true;
+            this.load_button.Click += new System.EventHandler(this.load_button_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(549, 325);
+            this.Controls.Add(this.load_button);
             this.Controls.Add(this.taskBox);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
@@ -98,6 +115,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.TextBox taskBox;
+        private System.Windows.Forms.Button load_button;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

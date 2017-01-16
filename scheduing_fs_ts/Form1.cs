@@ -13,6 +13,7 @@ namespace scheduing_fs_ts
  //w zapisie bug , poprawiony dla taskow poprawic dla pauz
     public partial class Form1 : Form
     {
+        string loaded_instance_id;
         int instance_nO = 0;
         int N = 30;
         Random rnd = new Random();
@@ -155,25 +156,7 @@ namespace scheduing_fs_ts
                 end_op1[i] = m1_time;
 
                 
-                // ACHTUNG
-                // Trzeba wziac pod uwage, ze op2 moze sie zaczac dopiero jak sie skonczy op 1,
-                //a w tym czasie moze wejsc zad 2 na pierwsza maszynke, 
-                //tamto poprzednie moze sie wykonywac normalnie na maszynce drugiej
-                // 2 listy booli wielkosci listy taskow (end_op1 i end_op2), jeden od op1 i drugi od op2, 
-                //zeby zaznaczac go na true jak operacja sie skonczy 
-                /*  foreach (pause pause in pauses)
-                  {
-
-                      if (m2_time <= pause.p_start << (m2_time + SortedTasks[i].duration_op1))
-                      {
-                          int before_pause = pause.p_start - m2_time;
-                          m2_time += before_pause + pause.p_duration + SortedTasks[i].duration_op1;
-
-                      }
-                      else { m2_time += SortedTasks[i].duration_op1; }
-                  }
-                  */
-                 // m2_time
+               
 
             }
 
@@ -215,6 +198,27 @@ namespace scheduing_fs_ts
                 button1.PerformClick();
                 e.Handled = true;//nie ma dzwieku po enterze
             }
+        }
+
+        private void load_button_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void load(string path)
+        {
+            int tasks_count;
+            string loaded_task;
+            List<Task> loaded_tasks = new List<Task>();
+            List<Pause> loaded_pauses = new List<Pause>();
+            StreamReader sr = new StreamReader(path);
+            loaded_instance_id = sr.ReadLine();
+            Int32.TryParse(sr.ReadLine(), out tasks_count);
+            for(int i = 0; i < tasks_count;i++)
+            {
+               sr
+            }
+
+
         }
     }
 }
