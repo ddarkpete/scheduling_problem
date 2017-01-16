@@ -124,7 +124,7 @@ namespace scheduing_fs_ts
             
             int m1_time = 0;
             int m2_time = 0;
-
+            List<Task> copy = SortedTasks.ToList();
             List<int> end_op1 = new List<int>();
             List<int> end_op2 = new List<int>();
             for (int i = 0; i < SortedTasks.Count; i++)
@@ -132,63 +132,85 @@ namespace scheduing_fs_ts
                 end_op1.Add(0);
                 end_op2.Add(0);
             }
-
-            for (int i = 0; i < SortedTasks.Count; i++)
+            bool scheduled = false;
+            while (scheduled == false)
             {
-                int p_counter = 0;
-
-                // taskBox.Text += m1_time + System.Environment.NewLine;
-                foreach (Pause pause in Pauses)
+                if (copy.Count > 0)//to chyba jednak nie jest najlepszy pomysł bo przy szeregowaniu op2
+                                   //korzystamy z indeksów a jak zaczniemy usuwać to się zaburzy struktura indeksow
+                                   //moznaby użyć metody List.Contains + lista bool czy uszeregowane
                 {
-                    if (m1_time <= pause.p_start && pause.p_start < (m1_time + SortedTasks[i].duration_op1))
+                    for (int i = 0; i < copy.Count; i++)
                     {
-                        int before_pause = pause.p_start - m1_time;
-                        m1_time += before_pause + pause.p_duration + SortedTasks[i].duration_op1;
-                        p_counter++;
-
-                    }
-
-                }
-                if (p_counter == 0)
-                { m1_time += SortedTasks[i].duration_op1; }
-
-                end_op1[i] = m1_time;
-            }
-            // taskBox.Text += "Operacje 2" + System.Environment.NewLine;
-            for (int i = 0; i < SortedTasks.Count; i++)
-            {
-
-                if (i != 0)
-                {
-                    if (end_op1[i] != 0 && end_op2[i - 1] != 0)
-                    {
-
-                        // taskBox.Text += m2_time + System.Environment.NewLine;
-                        if (end_op2[i - 1] > end_op1[i])
+                        if (copy.[i].start == m1_time + 1 && end_op1[i] == 0)
                         {
-                            m2_time = end_op2[i - 1];
-                            m2_time += SortedTasks[i].duration_op2;
-                            end_op2[i] = m2_time;
-                        }
+                            int p_counter = 0;
 
-                        else if (end_op1[i] > end_op2[i - 1])
-                        {
-                            m2_time = end_op1[i];
-                            m2_time += SortedTasks[i].duration_op2;
-                            end_op2[i] = m2_time;
+                            // taskBox.Text += m1_time + System.Environment.NewLine;
+                            foreach (Pause pause in Pauses)
+                            {
+                                if (m1_time <= pause.p_start && pause.p_start < (m1_time + copy[i].duration_op1))
+                                {
+                                    int before_pause = pause.p_start - m1_time;
+                                    m1_time += before_pause + pause.p_duration + copy[i].duration_op1;
+                                    p_counter++;
+
+                                }
+
+                            }
+                            if (p_counter == 0)
+                            {
+                                m1_time += copy[i].duration_op1;
+                                end_op1[i] = m1_time;
+                                break;
+                            }
+                            else
+                            {
+                                end_op1[i] = m1_time;
+                                break;
+                            }
+
+
                         }
+                        else m1_time++;
                     }
-                }
-                if (i == 0)
-                {
-                    if (end_op1[0] != 0)
+                    // taskBox.Text += "Operacje 2" + System.Environment.NewLine;
+                    for (int i = 0; i < copy.Count; i++)
                     {
-                        m2_time = end_op1[0];
-                        m2_time += SortedTasks[0].duration_op2;
-                        end_op2[0] = m2_time;
-                    }
 
+                        if (i > 0)
+                        {
+                            if (end_op1[i] != 0 && end_op2[i - 1] != 0)
+                            {
+
+                                // taskBox.Text += m2_time + System.Environment.NewLine;
+                                if (end_op2[i - 1] > end_op1[i])
+                                {
+                                    m2_time = end_op2[i - 1];
+                                    m2_time += copy[i].duration_op2;
+                                    end_op2[i] = m2_time;
+                                }
+
+                                else if (end_op1[i] > end_op2[i - 1])
+                                {
+                                    m2_time = end_op1[i];
+                                    m2_time += copy[i].duration_op2;
+                                    end_op2[i] = m2_time;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (end_op1[0] != 0)
+                            {
+                                m2_time = end_op1[0];
+                                m2_time += copy[0].duration_op2;
+                                end_op2[0] = m2_time;
+                            }
+
+                        }
+                    }
                 }
+                else { scheduled = true; }
             }
            // taskBox.Text += "Time of machine 1: " + m1_time + System.Environment.NewLine;
             taskBox.Text += "Total time: " + m2_time + System.Environment.NewLine;
