@@ -119,10 +119,9 @@ namespace scheduing_fs_ts
             sr.Close();
         }
 
-        public void count_time()// JESZCZE NIE OK 
+        public int count_time(List<Task> SortedTasks)// JESZCZE NIE OK 
         {
-            SortedTasks = Tasks.OrderBy(o => o.start).ToList();
-            SortedPauses = Pauses.OrderBy(o => o.p_start).ToList();
+            
             int m1_time = 0;
             int m2_time = 0;
 
@@ -191,12 +190,17 @@ namespace scheduing_fs_ts
 
                 }
             }
-            taskBox.Text += "Time of machine 1: " + m1_time + System.Environment.NewLine;
-            taskBox.Text += "Time of machine 2: " + m2_time + System.Environment.NewLine;
-
+           // taskBox.Text += "Time of machine 1: " + m1_time + System.Environment.NewLine;
+            taskBox.Text += "Total time: " + m2_time + System.Environment.NewLine;
+            return m2_time; 
         }
 
+        public void tabu()
+        {
+            count_time(SortedTasks);
 
+
+        }
         public Form1()
         {
             InitializeComponent();
@@ -209,7 +213,9 @@ namespace scheduing_fs_ts
             Int32.TryParse(textBox1.Text, out N);
             task_generator();
             pause_generator();
-            count_time();
+            SortedTasks = Tasks.OrderBy(o => o.start).ToList();
+            SortedPauses = Pauses.OrderBy(o => o.p_start).ToList();
+            tabu();
             //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
             saveFileDialog1.ShowDialog();
             textBox1.Text = "";
