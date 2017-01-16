@@ -152,14 +152,8 @@ namespace scheduing_fs_ts
                 if (p_counter == 0)
                 { m1_time += SortedTasks[i].duration_op1; }
 
-                if(m2_time < m1_time)//jak nie skonczyla sie op 1
-                {
-                    m2_time = m1_time + SortedTasks[i].duration_op2;
-                }
-                else//jak op1 juz sie skonczyla
-                {
-                    m2_time += SortedTasks[i].duration_op2;
-                }
+                end_op1[i] = m1_time;
+
                 
                 // ACHTUNG
                 // Trzeba wziac pod uwage, ze op2 moze sie zaczac dopiero jak sie skonczy op 1,
