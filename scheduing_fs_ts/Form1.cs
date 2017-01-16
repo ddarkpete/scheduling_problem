@@ -37,6 +37,7 @@ namespace scheduing_fs_ts
             public int p_duration;
         };
         private List<Pause> Pauses = new List<Pause>();
+        private List<Pause> SortedPauses = new List<Pause>();
         public void task_generator()
         {
 
@@ -98,7 +99,7 @@ namespace scheduing_fs_ts
             sr.WriteLine("***{0}***",instance_nO); //tu numer instancj8i zrob PIt
             instance_nO++;
             sr.WriteLine("{0}", Tasks.Count);
-            foreach (Task taskk in Tasks)
+            foreach (Task taskk in SortedTasks)
             {
                 Console.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
                 sr.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
@@ -120,49 +121,65 @@ namespace scheduing_fs_ts
         public void count_time()// JESZCZE NIE OK 
         {
             SortedTasks = Tasks.OrderBy(o => o.start).ToList();
+            SortedPauses = Pauses.OrderBy(o => o.p_start).ToList();
             int m1_time = 0;
             int m2_time = 0;
-            List<bool> end_op1= new List<bool>(); 
-            List<bool> end_op2= new List<bool>(); 
+        
+            List<int> end_op1= new List<int>(); 
+            List<int> end_op2= new List<int>(); 
             for (int i=0; i<SortedTasks.Count; i++)
             {
-                end_op1.Add(false);
-                end_op2.Add(false);
+                end_op1.Add(0);
+                end_op2.Add(0);
             }
 
             for(int i=0; i<SortedTasks.Count; i++ )
             {
+                int p_counter = 0;
                 //  m1_time += SortedTasks[i].duration_op1; 
                 taskBox.Text += m1_time + System.Environment.NewLine;
                 foreach (Pause pause in Pauses )
                 {
-                    if(m1_time <= pause.p_start << (m1_time+ SortedTasks[i].duration_op1))
+                    if(m1_time <= pause.p_start && pause.p_start < (m1_time+ SortedTasks[i].duration_op1))
                     {
                         int before_pause = pause.p_start - m1_time;
                         m1_time += before_pause + pause.p_duration + SortedTasks[i].duration_op1;
+                        p_counter++;
                    
                     }
-                    else { m1_time += SortedTasks[i].duration_op1;
-                        break;  } 
+                    
                 }
+                if (p_counter == 0)
+                { m1_time += SortedTasks[i].duration_op1; }
+
+                if(m2_time < m1_time)//jak nie skonczyla sie op 1
+                {
+                    m2_time = m1_time + SortedTasks[i].duration_op2;
+                }
+                else//jak op1 juz sie skonczyla
+                {
+                    m2_time += SortedTasks[i].duration_op2;
+                }
+                
                 // ACHTUNG
                 // Trzeba wziac pod uwage, ze op2 moze sie zaczac dopiero jak sie skonczy op 1,
                 //a w tym czasie moze wejsc zad 2 na pierwsza maszynke, 
                 //tamto poprzednie moze sie wykonywac normalnie na maszynce drugiej
                 // 2 listy booli wielkosci listy taskow (end_op1 i end_op2), jeden od op1 i drugi od op2, 
                 //zeby zaznaczac go na true jak operacja sie skonczy 
-              /*  foreach (pause pause in pauses)
-                {
-                    
-                    if (m2_time <= pause.p_start << (m2_time + SortedTasks[i].duration_op1))
-                    {
-                        int before_pause = pause.p_start - m2_time;
-                        m2_time += before_pause + pause.p_duration + SortedTasks[i].duration_op1;
+                /*  foreach (pause pause in pauses)
+                  {
 
-                    }
-                    else { m2_time += SortedTasks[i].duration_op1; }
-                }
-                */
+                      if (m2_time <= pause.p_start << (m2_time + SortedTasks[i].duration_op1))
+                      {
+                          int before_pause = pause.p_start - m2_time;
+                          m2_time += before_pause + pause.p_duration + SortedTasks[i].duration_op1;
+
+                      }
+                      else { m2_time += SortedTasks[i].duration_op1; }
+                  }
+                  */
+                 // m2_time
 
             }
 
@@ -181,12 +198,13 @@ namespace scheduing_fs_ts
             Int32.TryParse(textBox1.Text, out N);
             task_generator();
             pause_generator();
+            count_time();
             //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
             saveFileDialog1.ShowDialog();
             textBox1.Text = "";
             time_mach1 = 0;
             time_mach2 = 0;
-            count_time();//a to nie powinno być przy wprowadzaniu pliku instancji? czy za jednym zamachem generujemy ,
+            //a to nie powinno być przy wprowadzaniu pliku instancji? czy za jednym zamachem generujemy ,
             //rozwiazujemy i tworzymy plik instancji oraz rozwiązania? chyba powinno być wczytanie instancji tez
             //zeby dr Radom mogl sprawdzic to
         }
