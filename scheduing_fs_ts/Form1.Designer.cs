@@ -84,7 +84,7 @@
             this.load_button.TabIndex = 5;
             this.load_button.Text = "Load instance";
             this.load_button.UseVisualStyleBackColor = true;
-            this.load_button.Click += new System.EventHandler(this.load_button_Click);
+            
             // 
             // openFileDialog1
             // 

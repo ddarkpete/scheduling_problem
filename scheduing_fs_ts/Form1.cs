@@ -30,6 +30,7 @@ namespace scheduing_fs_ts
         };
         private List<Task> Tasks = new List<Task>();
         List<Task> SortedTasks = new List<Task>();
+
         public class Pause
         {
             public int p_id;
@@ -39,6 +40,7 @@ namespace scheduing_fs_ts
         };
         private List<Pause> Pauses = new List<Pause>();
         private List<Pause> SortedPauses = new List<Pause>();
+        
         public void task_generator()
         {
 
@@ -119,10 +121,12 @@ namespace scheduing_fs_ts
             sr.Close();
         }
 
-        public void count_time()// JESZCZE NIE OK 
+        public int count_time(List<Task> SortedTasks, List<Pause> SortedPauses )// JESZCZE NIE OK 
         {
-            SortedTasks = Tasks.OrderBy(o => o.start).ToList();
-            SortedPauses = Pauses.OrderBy(o => o.p_start).ToList();
+            //kurwełe jednak nie jest dobrze
+            //Trzeba obostrzenia dotyczace czasu startu plus nie mozna sortowac w funckji bo koniec koncow
+            //Caly zcas bedziemy to samo szeregowac wiec dupa blada ://////
+            //Trzeba to jakos lepiej ogarnac
             int m1_time = 0;
             int m2_time = 0;
 
@@ -139,7 +143,7 @@ namespace scheduing_fs_ts
                 int p_counter = 0;
                 
                // taskBox.Text += m1_time + System.Environment.NewLine;
-                foreach (Pause pause in Pauses)
+                foreach (Pause pause in SortedPauses)
                 {
                     if (m1_time <= pause.p_start && pause.p_start < (m1_time + SortedTasks[i].duration_op1))
                     {
@@ -193,9 +197,20 @@ namespace scheduing_fs_ts
             }
             taskBox.Text += "Time of machine 1: " + m1_time + System.Environment.NewLine;
             taskBox.Text +="Time of machine 2: "+ m2_time + System.Environment.NewLine;
+            return m2_time; 
 
         }
+         
+        public void tabu(){
+            int current_time=count_time(SortedTasks, SortedPauses);
+            List<Task> Tabu_Tasks = new List<Task>();
+            Tabu_Tasks = Tasks;
+            int[] tabu = new int[2];
+            List<int[]> tabu_moves = new List<int[]>();
+            
 
+
+            }
     
     public Form1()
     {
@@ -209,7 +224,9 @@ namespace scheduing_fs_ts
         Int32.TryParse(textBox1.Text, out N);
         task_generator();
         pause_generator();
-        count_time();
+        SortedTasks = Tasks.OrderBy(o => o.start).ToList();
+        SortedPauses = Pauses.OrderBy(o => o.p_start).ToList();
+            tabu();
         //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
         saveFileDialog1.ShowDialog();
         textBox1.Text = "";
