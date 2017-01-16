@@ -69,7 +69,7 @@ namespace scheduing_fs_ts
             for (int j = N / 2 + 1; j < N; j++)
             {
                 Tasks[j].start = rnd.Next(1, (time_mach1 + time_mach2) * 1 / 4);
-                
+
             }
             //buffer_task = tasks;
             /*     task_instances.Add(tasks);
@@ -96,7 +96,7 @@ namespace scheduing_fs_ts
         private void save(string path)
         {
             StreamWriter sr = new StreamWriter(path);
-            sr.WriteLine("***{0}***",instance_nO); //tu numer instancj8i zrob PIt
+            sr.WriteLine("***{0}***", instance_nO); //tu numer instancj8i zrob PIt
             instance_nO++;
             sr.WriteLine("{0}", Tasks.Count);
             foreach (Task taskk in SortedTasks)
@@ -117,104 +117,120 @@ namespace scheduing_fs_ts
             sr.WriteLine("***EOF***");
             sr.Close();
         }
-    
+
         public void count_time()// JESZCZE NIE OK 
         {
             SortedTasks = Tasks.OrderBy(o => o.start).ToList();
             SortedPauses = Pauses.OrderBy(o => o.p_start).ToList();
             int m1_time = 0;
             int m2_time = 0;
-        
-            List<int> end_op1= new List<int>(); 
-            List<int> end_op2= new List<int>(); 
-            for (int i=0; i<SortedTasks.Count; i++)
+
+            List<int> end_op1 = new List<int>();
+            List<int> end_op2 = new List<int>();
+            for (int i = 0; i < SortedTasks.Count; i++)
             {
                 end_op1.Add(0);
                 end_op2.Add(0);
             }
 
-            for(int i=0; i<SortedTasks.Count; i++ )
+            for (int i = 0; i < SortedTasks.Count; i++)
             {
                 int p_counter = 0;
-                //  m1_time += SortedTasks[i].duration_op1; 
-                taskBox.Text += m1_time + System.Environment.NewLine;
-                foreach (Pause pause in Pauses )
+                
+               // taskBox.Text += m1_time + System.Environment.NewLine;
+                foreach (Pause pause in Pauses)
                 {
-                    if(m1_time <= pause.p_start && pause.p_start < (m1_time+ SortedTasks[i].duration_op1))
+                    if (m1_time <= pause.p_start && pause.p_start < (m1_time + SortedTasks[i].duration_op1))
                     {
                         int before_pause = pause.p_start - m1_time;
                         m1_time += before_pause + pause.p_duration + SortedTasks[i].duration_op1;
                         p_counter++;
-                   
+
                     }
-                    
+
                 }
                 if (p_counter == 0)
                 { m1_time += SortedTasks[i].duration_op1; }
 
                 end_op1[i] = m1_time;
-
-                
-                // ACHTUNG
-                // Trzeba wziac pod uwage, ze op2 moze sie zaczac dopiero jak sie skonczy op 1,
-                //a w tym czasie moze wejsc zad 2 na pierwsza maszynke, 
-                //tamto poprzednie moze sie wykonywac normalnie na maszynce drugiej
-                // 2 listy booli wielkosci listy taskow (end_op1 i end_op2), jeden od op1 i drugi od op2, 
-                //zeby zaznaczac go na true jak operacja sie skonczy 
-                /*  foreach (pause pause in pauses)
-                  {
-
-                      if (m2_time <= pause.p_start << (m2_time + SortedTasks[i].duration_op1))
-                      {
-                          int before_pause = pause.p_start - m2_time;
-                          m2_time += before_pause + pause.p_duration + SortedTasks[i].duration_op1;
-
-                      }
-                      else { m2_time += SortedTasks[i].duration_op1; }
-                  }
-                  */
-                 // m2_time
-
             }
-
-
-
-        }
-        public Form1()
-        {
-            InitializeComponent();
-        }
-        private void Form1_Load(object sender, EventArgs e)
-        {
-        }
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Int32.TryParse(textBox1.Text, out N);
-            task_generator();
-            pause_generator();
-            count_time();
-            //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
-            saveFileDialog1.ShowDialog();
-            textBox1.Text = "";
-            time_mach1 = 0;
-            time_mach2 = 0;
-            //a to nie powinno być przy wprowadzaniu pliku instancji? czy za jednym zamachem generujemy ,
-            //rozwiazujemy i tworzymy plik instancji oraz rozwiązania? chyba powinno być wczytanie instancji tez
-            //zeby dr Radom mogl sprawdzic to
-        }
-        
-        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-            string save_file = saveFileDialog1.FileName;
-            save(save_file);
-        }
-        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)//mozna wpisywac liczbe zadan i enter
-        {
-            if (e.KeyChar == (char)13)
+           // taskBox.Text += "Operacje 2" + System.Environment.NewLine;
+            for (int i = 0; i < SortedTasks.Count; i++)
             {
-                button1.PerformClick();
-                e.Handled = true;//nie ma dzwieku po enterze
+
+                if (i != 0)
+                {
+                    if (end_op1[i] != 0 && end_op2[i - 1] != 0)
+                    {
+
+                       // taskBox.Text += m2_time + System.Environment.NewLine;
+                        if (end_op2[i - 1] > end_op1[i])
+                        {
+                            m2_time = end_op2[i - 1];
+                            m2_time += SortedTasks[i].duration_op2;
+                            end_op2[i] = m2_time;
+                        }
+
+                        else if (end_op1[i] > end_op2[i - 1])
+                        {
+                            m2_time = end_op1[i];
+                            m2_time += SortedTasks[i].duration_op2;
+                            end_op2[i] = m2_time;
+                        }
+                    }
+                }
+                if (i == 0)
+                {
+                    if (end_op1[0] != 0)
+                    {
+                        m2_time = end_op1[0];
+                        m2_time += SortedTasks[0].duration_op2;
+                        end_op2[0] = m2_time;
+                    }
+
+                }
             }
+            taskBox.Text += "Time of machine 1: " + m1_time + System.Environment.NewLine;
+            taskBox.Text +="Time of machine 2: "+ m2_time + System.Environment.NewLine;
+
+        }
+
+    
+    public Form1()
+    {
+        InitializeComponent();
+    }
+    private void Form1_Load(object sender, EventArgs e)
+    {
+    }
+    private void button1_Click(object sender, EventArgs e)
+    {
+        Int32.TryParse(textBox1.Text, out N);
+        task_generator();
+        pause_generator();
+        count_time();
+        //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
+        saveFileDialog1.ShowDialog();
+        textBox1.Text = "";
+        time_mach1 = 0;
+        time_mach2 = 0;
+        //a to nie powinno być przy wprowadzaniu pliku instancji? czy za jednym zamachem generujemy ,
+        //rozwiazujemy i tworzymy plik instancji oraz rozwiązania? chyba powinno być wczytanie instancji tez
+        //zeby dr Radom mogl sprawdzic to
+    }
+
+    private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
+    {
+        string save_file = saveFileDialog1.FileName;
+        save(save_file);
+    }
+    private void textBox1_KeyPress(object sender, KeyPressEventArgs e)//mozna wpisywac liczbe zadan i enter
+    {
+        if (e.KeyChar == (char)13)
+        {
+            button1.PerformClick();
+            e.Handled = true;//nie ma dzwieku po enterze
         }
     }
+}
 }
