@@ -127,6 +127,7 @@ namespace scheduing_fs_ts
             List<Task> copy = SortedTasks.ToList();
             List<int> end_op1 = new List<int>();
             List<int> end_op2 = new List<int>();
+            //List<bool> scheduled_op1
             for (int i = 0; i < SortedTasks.Count; i++)
             {
                 end_op1.Add(0);
@@ -135,7 +136,7 @@ namespace scheduing_fs_ts
             bool scheduled = false;
             while (scheduled == false)
             {
-                if (copy.Count > 0)//to chyba jednak nie jest najlepszy pomysł bo przy szeregowaniu op2
+                if (end_op1.Contains(0))//to chyba jednak nie jest najlepszy pomysł bo przy szeregowaniu op2
                                    //korzystamy z indeksów a jak zaczniemy usuwać to się zaburzy struktura indeksow
                                    //moznaby użyć metody List.Contains + lista bool czy uszeregowane
                 {
