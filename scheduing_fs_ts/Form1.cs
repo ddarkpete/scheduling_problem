@@ -259,7 +259,7 @@ namespace scheduing_fs_ts
             if (e.KeyChar == (char)13)
             {
                 button1.PerformClick();
-                e.Handled = true;//nie ma dzwieku po enterze
+                e.Handled = true;//nie ma dzwieku po enterze //xyz
             }
         }
         private void load(string path)
