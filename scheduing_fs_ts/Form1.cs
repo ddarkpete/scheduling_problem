@@ -29,7 +29,7 @@ namespace scheduing_fs_ts
             //public int pause;
         };
         private List<Task> Tasks = new List<Task>();
-        List<Task> SortedTasks = new List<Task>();
+        List<Task> SortedTasksglobal = new List<Task>();
         public class Pause
         {
             public int p_id;
@@ -94,30 +94,7 @@ namespace scheduing_fs_ts
             }
 
         }
-        private void save(string path)
-        {
-            StreamWriter sr = new StreamWriter(path);
-            sr.WriteLine("***{0}***", instance_nO); //tu numer instancj8i zrob PIt
-            instance_nO++;
-            sr.WriteLine("{0}", Tasks.Count);
-            foreach (Task taskk in SortedTasks)
-            {
-                Console.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
-                sr.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
-                                                                                                                                                // 
-            }
-
-            int x = 0;
-            sr.WriteLine("{0}", Pauses.Count);
-            foreach (Pause pause in Pauses)
-            {
-                sr.WriteLine("{0};{1};{2};", x, pause.p_duration, pause.p_start);
-                x++;
-            }
-
-            sr.WriteLine("***EOF***");
-            sr.Close();
-        }
+       
 
         public int count_time(List<Task> SortedTasks)// JESZCZE NIE OK 
         {
@@ -136,13 +113,20 @@ namespace scheduing_fs_ts
             bool scheduled = false;
             while (scheduled == false)
             {
+                //Console.WriteLine("twoja stara ty ry ty ry");
                 if (end_op1.Contains(0))//to chyba jednak nie jest najlepszy pomysł bo przy szeregowaniu op2
-                                   //korzystamy z indeksów a jak zaczniemy usuwać to się zaburzy struktura indeksow
-                                   //moznaby użyć metody List.Contains + lista bool czy uszeregowane
-                {
+                {               //korzystamy z indeksów a jak zaczniemy usuwać to się zaburzy struktura indeksow
+                                //moznaby użyć metody List.Contains + lista bool czy uszeregowane
+                   /* foreach ( int end in end_op1)
+                    {
+                        Console.Write("{0} ",end);
+                    }*/
+                
+
+                
                     for (int i = 0; i < copy.Count; i++)
                     {
-                        if (copy.[i].start == m1_time + 1 && end_op1[i] == 0)
+                        if (copy[i].start <= m1_time && end_op1[i] == 0)
                         {
                             int p_counter = 0;
 
@@ -151,6 +135,7 @@ namespace scheduing_fs_ts
                             {
                                 if (m1_time <= pause.p_start && pause.p_start < (m1_time + copy[i].duration_op1))
                                 {
+                                    Console.WriteLine("jebs w pauze");
                                     int before_pause = pause.p_start - m1_time;
                                     m1_time += before_pause + pause.p_duration + copy[i].duration_op1;
                                     p_counter++;
@@ -166,14 +151,20 @@ namespace scheduing_fs_ts
                             }
                             else
                             {
+                                m1_time += copy[i].duration_op1;
                                 end_op1[i] = m1_time;
                                 break;
                             }
 
 
                         }
-                        else m1_time++;
-                    }
+                        else
+                        {
+                            m1_time++;
+                            Console.WriteLine("nie pasuje w chuj");
+
+                        }
+                      }
                     // taskBox.Text += "Operacje 2" + System.Environment.NewLine;
                     for (int i = 0; i < copy.Count; i++)
                     {
@@ -220,10 +211,21 @@ namespace scheduing_fs_ts
 
         public void tabu()
         {
-            count_time(SortedTasks);
+            count_time(SortedTasksglobal);
 
 
         }
+
+
+        /*
+         * 
+         *                         OBSŁUGA ZAPISÓW/WCZYTYWAŃ I OKIENKA
+         * 
+         * 
+         */
+
+
+
         public Form1()
         {
             InitializeComponent();
@@ -236,7 +238,7 @@ namespace scheduing_fs_ts
             Int32.TryParse(textBox1.Text, out N);
             task_generator();
             pause_generator();
-            SortedTasks = Tasks.OrderBy(o => o.start).ToList();
+            SortedTasksglobal = Tasks.OrderBy(o => o.start).ToList();
             SortedPauses = Pauses.OrderBy(o => o.p_start).ToList();
             tabu();
             //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
@@ -259,7 +261,7 @@ namespace scheduing_fs_ts
             if (e.KeyChar == (char)13)
             {
                 button1.PerformClick();
-                e.Handled = true;//nie ma dzwieku po enterze //xyz
+                e.Handled = true;//nie ma dzwieku po enterze
             }
         }
         private void load(string path)
@@ -300,6 +302,31 @@ namespace scheduing_fs_ts
 
             }
 
+        }
+
+        private void save(string path)
+        {
+            StreamWriter sr = new StreamWriter(path);
+            sr.WriteLine("***{0}***", instance_nO); //tu numer instancj8i zrob PIt
+            instance_nO++;
+            sr.WriteLine("{0}", Tasks.Count);
+            foreach (Task taskk in SortedTasksglobal)
+            {
+                Console.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
+                sr.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
+                                                                                                                                                // 
+            }
+
+            int x = 0;
+            sr.WriteLine("{0}", Pauses.Count);
+            foreach (Pause pause in Pauses)
+            {
+                sr.WriteLine("{0};{1};{2};", x, pause.p_duration, pause.p_start);
+                x++;
+            }
+
+            sr.WriteLine("***EOF***");
+            sr.Close();
         }
 
         private void load_button_Click(object sender, EventArgs e)
