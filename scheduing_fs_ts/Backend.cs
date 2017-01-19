@@ -93,7 +93,7 @@ namespace scheduing_fs_ts
         }
 
 
-        public int count_time(List<Task> SortedTasks)// JESZCZE NIE OK 
+        public int count_time(List<Task> SortedTasks, Form1 formobject)// JESZCZE NIE OK 
         {
 
             int m1_time = 0;
@@ -202,20 +202,20 @@ namespace scheduing_fs_ts
                 else { scheduled = true; }
             }
             // taskBox.Text += "Time of machine 1: " + m1_time + System.Environment.NewLine;
-            this.Form1.taskBox.Text += "Total time: " + m2_time + System.Environment.NewLine;
+            formobject.taskBox.Text += "Total time: " + m2_time + System.Environment.NewLine;
             return m2_time;
         }
 
-        public void tabu()
+        public void tabu(Form1 form)
         {
-            count_time(SortedTasksglobal);
+            count_time(SortedTasksglobal,form);
 
 
         }
 
 
         ////////**************************************ZAPIS/ODCZYT*********************************************/
-        private void load(string path)
+        public void load(string path)
         {
             int tasks_count;
             int pauses_count;
@@ -255,7 +255,7 @@ namespace scheduing_fs_ts
 
         }
 
-        private void save(string path)
+        public void save(string path)
         {
             StreamWriter sr = new StreamWriter(path);
             sr.WriteLine("***{0}***", instance_nO); //tu numer instancj8i zrob PIt
