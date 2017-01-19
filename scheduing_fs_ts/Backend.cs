@@ -7,7 +7,7 @@ using System.IO;
 
 namespace scheduing_fs_ts
 {
-    class Backend
+    class Backend : Form1
     {
         private static Backend instance;
 
@@ -24,18 +24,18 @@ namespace scheduing_fs_ts
                 return instance;
             }
         }
-        string loaded_instance_id;
-        int instance_nO = 0;
-        int N = 30;
+        public string loaded_instance_id;
+        public int instance_nO = 0;
+        public int N = 30;
         Random rnd = new Random();
-        int time_mach1 = 0;
-        int time_mach2 = 0;
+        public int time_mach1 = 0;
+        public int time_mach2 = 0;
 
-        private List<Task> Tasks = new List<Task>();
-        List<Task> SortedTasksglobal = new List<Task>();
+        public List<Task> Tasks = new List<Task>();
+        public List<Task> SortedTasksglobal = new List<Task>();
 
-        private List<Pause> Pauses = new List<Pause>();
-        private List<Pause> SortedPauses = new List<Pause>();
+        public List<Pause> Pauses = new List<Pause>();
+        public List<Pause> SortedPauses = new List<Pause>();
         public void task_generator()
         {
 
@@ -202,7 +202,7 @@ namespace scheduing_fs_ts
                 else { scheduled = true; }
             }
             // taskBox.Text += "Time of machine 1: " + m1_time + System.Environment.NewLine;
-            taskBox.Text += "Total time: " + m2_time + System.Environment.NewLine;
+            this.Form1.taskBox.Text += "Total time: " + m2_time + System.Environment.NewLine;
             return m2_time;
         }
 

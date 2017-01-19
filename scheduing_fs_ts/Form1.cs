@@ -34,17 +34,17 @@ namespace scheduing_fs_ts
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            Int32.TryParse(textBox1.Text, out N);
-            task_generator();
-            pause_generator();
-            SortedTasksglobal = Tasks.OrderBy(o => o.start).ToList();
-            SortedPauses = Pauses.OrderBy(o => o.p_start).ToList();
-            tabu();
+            Int32.TryParse(textBox1.Text, out Backend.Instance.N);
+            Backend.Instance.task_generator();
+            Backend.Instance.pause_generator();
+            Backend.Instance.SortedTasksglobal = Backend.Instance.Tasks.OrderBy(o => o.start).ToList();
+            Backend.Instance.SortedPauses = Backend.Instance.Pauses.OrderBy(o => o.p_start).ToList();
+            Backend.Instance.tabu();
             //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
             saveFileDialog1.ShowDialog();
             textBox1.Text = "";
-            time_mach1 = 0;
-            time_mach2 = 0;
+            Backend.Instance.time_mach1 = 0;
+            Backend.Instance.time_mach2 = 0;
             //a to nie powinno być przy wprowadzaniu pliku instancji? czy za jednym zamachem generujemy ,
             //rozwiazujemy i tworzymy plik instancji oraz rozwiązania? chyba powinno być wczytanie instancji tez
             //zeby dr Radom mogl sprawdzic to
@@ -53,7 +53,7 @@ namespace scheduing_fs_ts
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             string save_file = saveFileDialog1.FileName;
-            save(save_file);
+            Backend.Instance.save(save_file);
         }
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)//mozna wpisywac liczbe zadan i enter
         {
@@ -73,7 +73,7 @@ namespace scheduing_fs_ts
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             string load_file = openFileDialog1.FileName;
-            load(load_file);
+            Backend.Instance.load(load_file);
         }
     }
 }

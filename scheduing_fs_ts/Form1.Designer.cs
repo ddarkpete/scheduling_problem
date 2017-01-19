@@ -115,7 +115,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.TextBox taskBox;
+        public System.Windows.Forms.TextBox taskBox;
         private System.Windows.Forms.Button load_button;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
