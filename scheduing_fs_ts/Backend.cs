@@ -123,8 +123,9 @@ namespace scheduing_fs_ts
 
                     for (int i = 0; i < copy.Count; i++)
                     {
-                        while (end_op1[i] == 0)
+                        while (end_op1[i] == 0)//chyba jest okazet , patrz w konsole najpierw są nr zadan probowanych do dodania a na koncu suma , nie wiem czemy nie przesyła do textboxa :(
                         {
+                            Console.WriteLine(i);
                             if (copy[i].start <= m1_time && end_op1[i] == 0)
                             {
                                 int p_counter = 0;
@@ -135,7 +136,7 @@ namespace scheduing_fs_ts
                                     if (m1_time <= pause.p_start && pause.p_start < (m1_time + copy[i].duration_op1))
                                     {
 
-                                        Console.WriteLine("jebs w pauze");
+                                        //Console.WriteLine("jebs w pauze");
                                         int before_pause = pause.p_start - m1_time;
                                         m1_time += before_pause + pause.p_duration + copy[i].duration_op1;
                                         p_counter++;
@@ -155,39 +156,44 @@ namespace scheduing_fs_ts
                             else
                             {
                                 m1_time++;
-                                Console.WriteLine("nie pasuje w chuj");
+                                //Console.WriteLine("nie pasuje w chuj");
 
                             }
                         }
                     }
-                    // taskBox.Text += "Operacje 2" + System.Environment.NewLine;
-                    for (int i = 0; i < copy.Count; i++)
-                    {
 
-                        if (i > 0)
+                    // taskBox.Text += "Operacje 2" + System.Environment.NewLine;
+                   
+                    for (int j = 0; j < copy.Count; j++)//WYGLĄDA OKEJ TERAZ WSZYSTKO ALE NIE JESTEM PEWIEN CZY ABY NA STOPRO TO JEST OKEJ MYŚLE ŻE MOGŁOBY TO WYMAGAC
+                        //GŁĘBSZEJ ANALIZY CZY ABY NAPEWNO SĄ DOBRZE OBLICZNE TE ZADANIA DRUGIE( czy nie należało by czasem zwiększać o jeden tak jak w pierwszych kiedy to nie można jeszcze
+                        //wrzucic zadania drugiego , pewnie czegoś poprostu nie rozumiem im so sorry ) dX
+                    {
+                        Console.WriteLine("j iteration {0} , {1}", j , m2_time);
+
+                        if (j > 0)
                         {
-                            if (end_op1[i] != 0 && end_op2[i - 1] != 0)
+                            if (end_op1[j] != 0 && end_op2[j - 1] != 0)
                             {
 
                                 // taskBox.Text += m2_time + System.Environment.NewLine;
-                                if (end_op2[i - 1] > end_op1[i])
+                                if (end_op2[j - 1] > end_op1[j])
                                 {
-                                    m2_time = end_op2[i - 1];
-                                    m2_time += copy[i].duration_op2;
-                                    end_op2[i] = m2_time;
+                                    m2_time = end_op2[j - 1];
+                                    m2_time += copy[j].duration_op2;
+                                    end_op2[j] = m2_time;
                                 }
 
-                                else if (end_op1[i] > end_op2[i - 1])
+                                else if (end_op1[j] > end_op2[j - 1])
                                 {
-                                    m2_time = end_op1[i];
-                                    m2_time += copy[i].duration_op2;
-                                    end_op2[i] = m2_time;
+                                    m2_time = end_op1[j];
+                                    m2_time += copy[j].duration_op2;
+                                    end_op2[j] = m2_time;
                                 }
                             }
                         }
                         else
                         {
-                            if (end_op1[0] == 0)
+                            if (end_op1[0] != 0)
                             {
                                 m2_time = end_op1[0];
                                 m2_time += copy[0].duration_op2;
@@ -196,8 +202,12 @@ namespace scheduing_fs_ts
 
                         }
                     }
+                    Console.WriteLine("DUPA");
+
+                    Console.WriteLine("{0}", m1_time);
+                    Console.WriteLine("{0}", m2_time);
                 }
-                else { scheduled = true; }
+                else { scheduled = true; Console.WriteLine("DUPA2"); }
             }
             // taskBox.Text += "Time of machine 1: " + m1_time + System.Environment.NewLine;
             formobject.taskBox.Text += "Total time: " + m2_time + System.Environment.NewLine;
