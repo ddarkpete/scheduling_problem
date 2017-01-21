@@ -123,7 +123,7 @@ namespace scheduing_fs_ts
 
                     for (int i = 0; i < copy.Count; i++)
                     {
-                        if (copy[i].start <= m1_time && end_op1[i] == 0)
+                        if(copy[i].start <= m1_time && end_op1[i] == 0)
                         {
                             int p_counter = 0;
 
@@ -132,10 +132,12 @@ namespace scheduing_fs_ts
                             {
                                 if (m1_time <= pause.p_start && pause.p_start < (m1_time + copy[i].duration_op1))
                                 {
+
                                     Console.WriteLine("jebs w pauze");
                                     int before_pause = pause.p_start - m1_time;
                                     m1_time += before_pause + pause.p_duration + copy[i].duration_op1;
                                     p_counter++;
+                                   
 
                                 }
 
@@ -146,14 +148,7 @@ namespace scheduing_fs_ts
                                 end_op1[i] = m1_time;
                                 break;
                             }
-                            else
-                            {
-                                m1_time += copy[i].duration_op1;
-                                end_op1[i] = m1_time;
-                                break;
-                            }
-
-
+                        
                         }
                         else
                         {
@@ -189,7 +184,7 @@ namespace scheduing_fs_ts
                         }
                         else
                         {
-                            if (end_op1[0] != 0)
+                            if (end_op1[0] == 0)
                             {
                                 m2_time = end_op1[0];
                                 m2_time += copy[0].duration_op2;
