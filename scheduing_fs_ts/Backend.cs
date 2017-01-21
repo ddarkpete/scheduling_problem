@@ -123,38 +123,41 @@ namespace scheduing_fs_ts
 
                     for (int i = 0; i < copy.Count; i++)
                     {
-                        if(copy[i].start <= m1_time && end_op1[i] == 0)
+                        while (end_op1[i] == 0)
                         {
-                            int p_counter = 0;
-
-                            // taskBox.Text += m1_time + System.Environment.NewLine;
-                            foreach (Pause pause in Pauses)
+                            if (copy[i].start <= m1_time && end_op1[i] == 0)
                             {
-                                if (m1_time <= pause.p_start && pause.p_start < (m1_time + copy[i].duration_op1))
+                                int p_counter = 0;
+
+                                // taskBox.Text += m1_time + System.Environment.NewLine;
+                                foreach (Pause pause in Pauses)
                                 {
+                                    if (m1_time <= pause.p_start && pause.p_start < (m1_time + copy[i].duration_op1))
+                                    {
 
-                                    Console.WriteLine("jebs w pauze");
-                                    int before_pause = pause.p_start - m1_time;
-                                    m1_time += before_pause + pause.p_duration + copy[i].duration_op1;
-                                    p_counter++;
-                                   
+                                        Console.WriteLine("jebs w pauze");
+                                        int before_pause = pause.p_start - m1_time;
+                                        m1_time += before_pause + pause.p_duration + copy[i].duration_op1;
+                                        p_counter++;
 
+
+                                    }
+
+                                }
+                                if (p_counter == 0)
+                                {
+                                    m1_time += copy[i].duration_op1;
+                                    end_op1[i] = m1_time;
+                                    break;
                                 }
 
                             }
-                            if (p_counter == 0)
+                            else
                             {
-                                m1_time += copy[i].duration_op1;
-                                end_op1[i] = m1_time;
-                                break;
-                            }
-                        
-                        }
-                        else
-                        {
-                            m1_time++;
-                            Console.WriteLine("nie pasuje w chuj");
+                                m1_time++;
+                                Console.WriteLine("nie pasuje w chuj");
 
+                            }
                         }
                     }
                     // taskBox.Text += "Operacje 2" + System.Environment.NewLine;
