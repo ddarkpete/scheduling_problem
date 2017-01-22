@@ -216,7 +216,57 @@ namespace scheduing_fs_ts
 
         public void tabu(Form1 form)
         {
-            count_time(SortedTasksglobal,form);
+            List<Task> BestSchedule = new List<Task>();
+            List<Task> ActualSchedule = new List<Task>();
+            List<Task> PreviouslSchedule = new List<Task>();
+            List<TabuChange> TabuElements = new List<TabuChange>();
+
+            ActualSchedule = SortedTasksglobal;
+            BestSchedule = SortedTasksglobal;
+            int BestScheduleTime = count_time(SortedTasksglobal, form);
+            int ActualScheduleTime = BestScheduleTime;//startowo
+            int PreviousScheduleTime = BestScheduleTime;
+
+            for (int i = 0; i < Tasks.Count; i++)//ile razy ma się wykonywywywać tabu?
+            {
+                bool LocalMin = false;
+                int BadChanges = 0;
+                while(LocalMin == false)
+                {
+                    if(BestScheduleTime > ActualScheduleTime)//jak aktualne lepsze niż najlepsze
+                    {
+                        BestSchedule = ActualSchedule;
+                        BestScheduleTime = ActualScheduleTime;
+                    }
+                    if(ActualScheduleTime > PreviousScheduleTime)
+                    {
+                        //Powrót do poprzedniego uszeregowania
+                        //dodanie ostatniej zmiany do listy tabu
+                        //zwiększenie bad changes
+                    }
+                    else
+                    {
+                        PreviousScheduleTime = ActualScheduleTime;
+                        PreviouslSchedule = ActualSchedule;
+                        //losowa zmiana 2 elementów w actual
+                        //obliczenie nowej sumy dla actual
+                    }
+
+
+                    if(BadChanges == Tasks.Count/4)
+                    {
+                        List<Task> Randomize = new List<Task>();
+                        Randomize = ActualSchedule.OrderBy(item => rnd.Next()).ToList();
+                        ActualSchedule = Randomize;
+                        LocalMin = true;
+
+
+                    }
+                }
+
+            }
+            
+
 
 
 
