@@ -172,11 +172,11 @@ namespace scheduing_fs_ts
 
                         if (j > 0)
                         {
-                            if (end_op1[j] != 0 && end_op2[j - 1] != 0)
+                            if (end_op1[j] != 0 && end_op2[j - 1] != 0)//jesli operacja j na m1 zakonczona i  poprzedniua z m2 zakonczona
                             {
 
                                 // taskBox.Text += m2_time + System.Environment.NewLine;
-                                if (end_op2[j - 1] > end_op1[j])
+                                if (end_op2[j - 1] > end_op1[j])// jesli koniec operacji j - 1 na n2 maszynie mniejszy niz koniec operacji j na pierwszej
                                 {
                                     m2_time = end_op2[j - 1];
                                     m2_time += copy[j].duration_op2;
@@ -217,6 +217,7 @@ namespace scheduing_fs_ts
         public void tabu(Form1 form)
         {
             count_time(SortedTasksglobal,form);
+
 
 
         }
