@@ -8,7 +8,7 @@ namespace scheduing_fs_ts
 {
     class TabuChange
     {
-        int tabu_el_1;
-        int tabu_el_2;
+        public int tabu_el_1;
+        public int tabu_el_2;
     }
 }

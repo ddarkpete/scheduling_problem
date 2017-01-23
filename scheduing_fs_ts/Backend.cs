@@ -224,8 +224,12 @@ namespace scheduing_fs_ts
             ActualSchedule = SortedTasksglobal;
             BestSchedule = SortedTasksglobal;
             int BestScheduleTime = count_time(SortedTasksglobal, form);
-            int ActualScheduleTime = BestScheduleTime;//startowo
+            int ActualScheduleTime;
             int PreviousScheduleTime = BestScheduleTime;
+
+            int prev_pivot_1;
+            int prev_pivot_2;
+
 
             for (int i = 0; i < Tasks.Count; i++)//ile razy ma się wykonywywywać tabu?
             {
@@ -233,6 +237,7 @@ namespace scheduing_fs_ts
                 int BadChanges = 0;
                 while(LocalMin == false)
                 {
+                    ActualScheduleTime = count_time(ActualSchedule, form);
                     if(BestScheduleTime > ActualScheduleTime)//jak aktualne lepsze niż najlepsze
                     {
                         BestSchedule = ActualSchedule;
@@ -243,17 +248,50 @@ namespace scheduing_fs_ts
                         //Powrót do poprzedniego uszeregowania
                         //dodanie ostatniej zmiany do listy tabu
                         //zwiększenie bad changes
+                        ActualSchedule = PreviouslSchedule;
+                        ActualScheduleTime = PreviousScheduleTime;
+                        TabuChange Tc = new TabuChange();
+                        Tc.tabu_el_1 = prev_pivot_1;
+                        Tc.tabu_el_2 = prev_pivot_2;
+                        if(TabuElements.Count < ActualSchedule.Count)
+                        {
+                            TabuElements.Add(Tc);
+                        }
+                        else
+                        {
+                            TabuElements.RemoveAt(0);// wyrzuc pierwszy
+                            TabuElements.Add(Tc);
+
+                        }
+                        
+
+
                     }
                     else
                     {
                         PreviousScheduleTime = ActualScheduleTime;
                         PreviouslSchedule = ActualSchedule;
+                        int index_1st = rnd.Next(ActualSchedule.Count);
+                        int index_2st = rnd.Next(ActualSchedule.Count);
+                        while (index_1st == index_2st) { index_2st = rnd.Next(ActualSchedule.Count); }//żeby miec pewność że są różne
+                        prev_pivot_1 = index_1st;//zeby pamietac ostatnia zmiane
+                        prev_pivot_2 = index_2st;
+                        TabuChange TempChange = new TabuChange();
+                        TempChange.tabu_el_1 = index_1st;
+                        TempChange.tabu_el_2 = index_2st;
+                        if(!(TabuElements.Contains(TempChange)))//jak już była taka zmiana
+                        {
+                            Task TempTask = ActualSchedule[index_2st];
+                            ActualSchedule[index_2st] = ActualSchedule[index_1st];
+                            ActualSchedule[index_1st] = TempTask;
+                        }
+                        
                         //losowa zmiana 2 elementów w actual
                         //obliczenie nowej sumy dla actual
                     }
 
 
-                    if(BadChanges == Tasks.Count/4)
+                    if(BadChanges == Tasks.Count/4)//ile złych ruchów chcemy dopuścić?
                     {
                         List<Task> Randomize = new List<Task>();
                         Randomize = ActualSchedule.OrderBy(item => rnd.Next()).ToList();
