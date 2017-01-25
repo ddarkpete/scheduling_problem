@@ -39,6 +39,7 @@ namespace scheduing_fs_ts
             Backend.Instance.pause_generator();
             Backend.Instance.SortedTasksglobal = Backend.Instance.Tasks.OrderBy(o => o.start).ToList();
             Backend.Instance.SortedPauses = Backend.Instance.Pauses.OrderBy(o => o.p_start).ToList();
+          //  Backend.Instance.count_time(Backend.Instance.SortedTasksglobal, this);// tabu dopisać 
             Backend.Instance.tabu(this);
             //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
             saveFileDialog1.ShowDialog();

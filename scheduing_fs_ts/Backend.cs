@@ -42,6 +42,7 @@ namespace scheduing_fs_ts
             for (int i = 0; i < N; i++)//N liczba  zadan
             {
                 Task New_task = new Task();
+                New_task.id = i; 
                 New_task.maszyna_op1 = 1;
                 New_task.maszyna_op2 = 2;
                 if (i % 2 == 0)
@@ -141,7 +142,6 @@ namespace scheduing_fs_ts
                                         m1_time += before_pause + pause.p_duration + copy[i].duration_op1;
                                         p_counter++;
 
-
                                     }
 
                                 }
@@ -224,15 +224,16 @@ namespace scheduing_fs_ts
             ActualSchedule = SortedTasksglobal;
             BestSchedule = SortedTasksglobal;
             int BestScheduleTime = count_time(SortedTasksglobal, form);
-            int ActualScheduleTime;
+            int ActualScheduleTime=0;
             int PreviousScheduleTime = BestScheduleTime;
 
-            int prev_pivot_1;
-            int prev_pivot_2;
+            int prev_pivot_1=0;
+            int prev_pivot_2=0;
 
 
             for (int i = 0; i < Tasks.Count; i++)//ile razy ma się wykonywywywać tabu?
             {
+                
                 bool LocalMin = false;
                 int BadChanges = 0;
                 while(LocalMin == false)
@@ -253,7 +254,7 @@ namespace scheduing_fs_ts
                         TabuChange Tc = new TabuChange();
                         Tc.tabu_el_1 = prev_pivot_1;
                         Tc.tabu_el_2 = prev_pivot_2;
-                        if(TabuElements.Count < ActualSchedule.Count)
+                        if(TabuElements.Count < ActualSchedule.Count)// to trzeba zmienic - ilosc elementów tabu
                         {
                             TabuElements.Add(Tc);
                         }
@@ -263,6 +264,7 @@ namespace scheduing_fs_ts
                             TabuElements.Add(Tc);
 
                         }
+                        BadChanges++;
                         
 
 
@@ -274,12 +276,12 @@ namespace scheduing_fs_ts
                         int index_1st = rnd.Next(ActualSchedule.Count);
                         int index_2st = rnd.Next(ActualSchedule.Count);
                         while (index_1st == index_2st) { index_2st = rnd.Next(ActualSchedule.Count); }//żeby miec pewność że są różne
-                        prev_pivot_1 = index_1st;//zeby pamietac ostatnia zmiane
-                        prev_pivot_2 = index_2st;
-                        TabuChange TempChange = new TabuChange();
-                        TempChange.tabu_el_1 = index_1st;
-                        TempChange.tabu_el_2 = index_2st;
-                        if(!(TabuElements.Contains(TempChange)))//jak już była taka zmiana
+                        prev_pivot_1 = ActualSchedule[index_1st].id;//zeby pamietac ostatnia zmiane
+                        prev_pivot_2 = ActualSchedule[index_2st].id;
+                        TabuChange TempChange = new TabuChange();//to źle chyba
+                        TempChange.tabu_el_1 = ActualSchedule[index_1st].id;
+                        TempChange.tabu_el_2 = ActualSchedule[index_2st].id;
+                        if (!(TabuElements.Contains(TempChange)))//jak już była taka zmiana
                         {
                             Task TempTask = ActualSchedule[index_2st];
                             ActualSchedule[index_2st] = ActualSchedule[index_1st];
@@ -291,23 +293,23 @@ namespace scheduing_fs_ts
                     }
 
 
-                    if(BadChanges == Tasks.Count/4)//ile złych ruchów chcemy dopuścić?
+                    if(BadChanges == Tasks.Count/5)//ile złych ruchów chcemy dopuścić?
                     {
                         List<Task> Randomize = new List<Task>();
                         Randomize = ActualSchedule.OrderBy(item => rnd.Next()).ToList();
                         ActualSchedule = Randomize;
                         LocalMin = true;
-
+                        TabuElements.Clear();
 
                     }
                 }
 
             }
-            
 
 
 
 
+            Console.WriteLine("Najlepszy czas: {0}", BestScheduleTime);
         }
 
 

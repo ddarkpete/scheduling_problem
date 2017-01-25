@@ -13,6 +13,7 @@ namespace scheduing_fs_ts
         public int duration_op2;
         public int maszyna_op2;
         public int start;
+        public int id; 
         //public int pause;
     }
 }
