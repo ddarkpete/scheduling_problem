@@ -329,6 +329,7 @@ namespace scheduing_fs_ts
               //  Console.WriteLine("{0}", split.Length);
                 //Console.WriteLine("{0};{1};{2};{3};{4};", split[0], split[1], split[2], split[3], split[4]);
                 Task TempLoad_task = new Task();//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
+                TempLoad_task.id = i;
                 Int32.TryParse(split[0], out TempLoad_task.duration_op1);
                 Int32.TryParse(split[1], out TempLoad_task.duration_op2);
                 Int32.TryParse(split[2], out TempLoad_task.maszyna_op1);
