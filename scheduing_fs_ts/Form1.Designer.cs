@@ -57,7 +57,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(294, 3);
+            this.button1.Location = new System.Drawing.Point(301, 25);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(118, 67);
             this.button1.TabIndex = 2;
@@ -79,9 +79,9 @@
             // 
             // load_button
             // 
-            this.load_button.Location = new System.Drawing.Point(294, 99);
+            this.load_button.Location = new System.Drawing.Point(301, 118);
             this.load_button.Name = "load_button";
-            this.load_button.Size = new System.Drawing.Size(125, 83);
+            this.load_button.Size = new System.Drawing.Size(118, 83);
             this.load_button.TabIndex = 5;
             this.load_button.Text = "Load instance";
             this.load_button.UseVisualStyleBackColor = true;
@@ -94,9 +94,9 @@
             // 
             // tabu_button
             // 
-            this.tabu_button.Location = new System.Drawing.Point(294, 203);
+            this.tabu_button.Location = new System.Drawing.Point(301, 225);
             this.tabu_button.Name = "tabu_button";
-            this.tabu_button.Size = new System.Drawing.Size(125, 72);
+            this.tabu_button.Size = new System.Drawing.Size(118, 72);
             this.tabu_button.TabIndex = 6;
             this.tabu_button.Text = "Search for best schedule";
             this.tabu_button.UseVisualStyleBackColor = true;
@@ -106,7 +106,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(549, 325);
+            this.ClientSize = new System.Drawing.Size(436, 325);
             this.Controls.Add(this.tabu_button);
             this.Controls.Add(this.load_button);
             this.Controls.Add(this.taskBox);
