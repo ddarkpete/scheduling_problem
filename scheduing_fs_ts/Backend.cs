@@ -222,24 +222,24 @@ namespace scheduing_fs_ts
             List<Task> ActualSchedule = new List<Task>();
             List<Task> PreviouslSchedule = new List<Task>();
             List<TabuChange> TabuElements = new List<TabuChange>();
-
             ActualSchedule = SortedTasksglobal;
             BestSchedule = SortedTasksglobal;
             int BestScheduleTime = count_time(SortedTasksglobal, form);
             int ActualScheduleTime=0;
             int PreviousScheduleTime = BestScheduleTime;
-
+           // Console.WriteLine("Najlepszy czas: {0} licznosc{1}", BestScheduleTime, SortedTasksglobal.Count);
             int prev_pivot_1=0;
             int prev_pivot_2=0;
 
 
-            for (int i = 0; i < Tasks.Count; i++)//ile razy ma się wykonywywywać tabu?
+            for (int i = 0; i < SortedTasksglobal.Count; i++)//ile razy ma się wykonywywywać tabu?
             {
-                
+                //Console.WriteLine("dziejesiedupa");
                 bool LocalMin = false;
                 int BadChanges = 0;
                 while(LocalMin == false)
                 {
+                    //System.Console.WriteLine("actial time {0}", ActualScheduleTime);
                     ActualScheduleTime = count_time(ActualSchedule, form);
                     if(BestScheduleTime > ActualScheduleTime)//jak aktualne lepsze niż najlepsze
                     {
@@ -280,7 +280,7 @@ namespace scheduing_fs_ts
                         while (index_1st == index_2st) { index_2st = rnd.Next(ActualSchedule.Count); }//żeby miec pewność że są różne
                         prev_pivot_1 = ActualSchedule[index_1st].id;//zeby pamietac ostatnia zmiane
                         prev_pivot_2 = ActualSchedule[index_2st].id;
-                        TabuChange TempChange = new TabuChange();//to źle chyba
+                        TabuChange TempChange = new TabuChange();
                         TempChange.tabu_el_1 = ActualSchedule[index_1st].id;
                         TempChange.tabu_el_2 = ActualSchedule[index_2st].id;
                         if (!(TabuElements.Contains(TempChange)))//jak już była taka zmiana
@@ -295,7 +295,7 @@ namespace scheduing_fs_ts
                     }
 
 
-                    if(BadChanges == Tasks.Count/5)//ile złych ruchów chcemy dopuścić?
+                    if(BadChanges == SortedTasksglobal.Count/5)//ile złych ruchów chcemy dopuścić?
                     {
                         List<Task> Randomize = new List<Task>();
                         Randomize = ActualSchedule.OrderBy(item => rnd.Next()).ToList();
@@ -311,7 +311,7 @@ namespace scheduing_fs_ts
 
 
 
-            Console.WriteLine("Najlepszy czas: {0}", BestScheduleTime);
+            Console.WriteLine("Najlepszy czas: {0} licznosc{1}", BestScheduleTime , SortedTasksglobal.Count);
             
         }
 
