@@ -40,7 +40,7 @@ namespace scheduing_fs_ts
             Backend.Instance.SortedTasksglobal = Backend.Instance.Tasks.OrderBy(o => o.start).ToList();
             Backend.Instance.SortedPauses = Backend.Instance.Pauses.OrderBy(o => o.p_start).ToList();
           //  Backend.Instance.count_time(Backend.Instance.SortedTasksglobal, this);// tabu dopisać 
-            Backend.Instance.tabu(this);
+           // Backend.Instance.tabu(this);
             //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
             saveFileDialog1.ShowDialog();
             Backend.Instance.SortedTasksglobal.Clear();
@@ -48,8 +48,8 @@ namespace scheduing_fs_ts
             Backend.Instance.Tasks.Clear();
             Backend.Instance.Pauses.Clear();
             textBox1.Text = "";
-            Backend.Instance.time_mach1 = 0;
-            Backend.Instance.time_mach2 = 0;
+            //Backend.Instance.time_mach1 = 0;
+            //Backend.Instance.time_mach2 = 0;
             //a to nie powinno być przy wprowadzaniu pliku instancji? czy za jednym zamachem generujemy ,
             //rozwiazujemy i tworzymy plik instancji oraz rozwiązania? chyba powinno być wczytanie instancji tez
             //zeby dr Radom mogl sprawdzic to
@@ -72,13 +72,27 @@ namespace scheduing_fs_ts
 
         private void load_button_Click(object sender, EventArgs e)
         {
+            Console.Write("cycki");
             openFileDialog1.ShowDialog();
+            Console.Write("cycki");
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             string load_file = openFileDialog1.FileName;
             Backend.Instance.load(load_file);
+        }
+
+        private void tabu_button_Click(object sender, EventArgs e)
+        {
+            Backend.Instance.tabu(this);
+            Backend.Instance.SortedTasksglobal.Clear();
+            Backend.Instance.SortedPauses.Clear();
+            Backend.Instance.Tasks.Clear();
+            Backend.Instance.Pauses.Clear();
+            Backend.Instance.time_mach1 = 0;
+            Backend.Instance.time_mach2 = 0;
+
         }
     }
 }

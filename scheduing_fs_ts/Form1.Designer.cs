@@ -35,6 +35,7 @@
             this.taskBox = new System.Windows.Forms.TextBox();
             this.load_button = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.tabu_button = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBox1
@@ -84,18 +85,29 @@
             this.load_button.TabIndex = 5;
             this.load_button.Text = "Load instance";
             this.load_button.UseVisualStyleBackColor = true;
-            
+            this.load_button.Click += new System.EventHandler(this.load_button_Click);
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
+            // tabu_button
+            // 
+            this.tabu_button.Location = new System.Drawing.Point(294, 203);
+            this.tabu_button.Name = "tabu_button";
+            this.tabu_button.Size = new System.Drawing.Size(125, 72);
+            this.tabu_button.TabIndex = 6;
+            this.tabu_button.Text = "Search for best schedule";
+            this.tabu_button.UseVisualStyleBackColor = true;
+            this.tabu_button.Click += new System.EventHandler(this.tabu_button_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(549, 325);
+            this.Controls.Add(this.tabu_button);
             this.Controls.Add(this.load_button);
             this.Controls.Add(this.taskBox);
             this.Controls.Add(this.button1);
@@ -118,6 +130,7 @@
         public System.Windows.Forms.TextBox taskBox;
         private System.Windows.Forms.Button load_button;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button tabu_button;
     }
 }
 

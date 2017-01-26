@@ -354,6 +354,9 @@ namespace scheduing_fs_ts
                 loaded_pauses.Add(Temp_pause);
 
             }
+            SortedTasksglobal = loaded_tasks;
+            Pauses = loaded_pauses;
+
 
         }
 
