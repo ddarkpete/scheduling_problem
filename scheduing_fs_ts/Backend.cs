@@ -30,6 +30,10 @@ namespace scheduing_fs_ts
         Random rnd = new Random();
         public int time_mach1 = 0;
         public int time_mach2 = 0;
+        public int p_time;
+        public int t_time1;
+        public int t_time2;
+
 
         public List<Task> Tasks = new List<Task>();
         public List<Task> ScheduledTasks = new List<Task>();
@@ -49,11 +53,13 @@ namespace scheduing_fs_ts
                 {
                     New_task.duration_op1 = rnd.Next(1, 200);
                     New_task.duration_op2 = rnd.Next(1, 200);
+                    
                 }
                 else
                 {
                     New_task.duration_op1 = rnd.Next(1, 50);
                     New_task.duration_op2 = rnd.Next(1, 50);
+                    
                 }
 
                 time_mach1 += New_task.duration_op1;
@@ -85,6 +91,7 @@ namespace scheduing_fs_ts
                 Pause Temp_pause = new Pause();
                 Temp_pause.p_id = i;
                 Temp_pause.p_duration = rnd.Next(1, 20);//górna granica czasu?
+                
                 Temp_pause.p_start = rnd.Next(1, time_mach1 - Temp_pause.p_duration - 1);
                 Temp_pause.p_end = Temp_pause.p_start + Temp_pause.p_duration;
                 Pauses.Add(Temp_pause);
@@ -92,7 +99,7 @@ namespace scheduing_fs_ts
             }
 
         }
-
+       
 
         public int count_time(List<Task> SortedTasks, Form1 formobject)// JESZCZE NIE OK 
         {
@@ -111,33 +118,26 @@ namespace scheduing_fs_ts
             bool scheduled = false;
             while (scheduled == false)
             {
-                //Console.WriteLine("twoja stara ty ry ty ry");
-                if (end_op1.Contains(0))//to chyba jednak nie jest najlepszy pomysł bo przy szeregowaniu op2
-                {               //korzystamy z indeksów a jak zaczniemy usuwać to się zaburzy struktura indeksow
-                                //moznaby użyć metody List.Contains + lista bool czy uszeregowane
-                                /* foreach ( int end in end_op1)
-                                 {
-                                     Console.Write("{0} ",end);
-                                 }*/
+                
+                if (end_op1.Contains(0))
+                {              
 
 
 
                     for (int i = 0; i < copy.Count; i++)
                     {
-                        while (end_op1[i] == 0)//chyba jest okazet , patrz w konsole najpierw są nr zadan probowanych do dodania a na koncu suma , nie wiem czemy nie przesyła do textboxa :(
+                        while (end_op1[i] == 0)
                         {
-                           // Console.WriteLine(i);
+                           
                             if (copy[i].start <= m1_time && end_op1[i] == 0)
                             {
                                 int p_counter = 0;
-
-                                // taskBox.Text += m1_time + System.Environment.NewLine;
+                                
                                 foreach (Pause pause in Pauses)
                                 {
                                     if (m1_time <= pause.p_start && pause.p_start < (m1_time + copy[i].duration_op1))
                                     {
 
-                                        //Console.WriteLine("jebs w pauze");
                                         int before_pause = pause.p_start - m1_time;
                                         m1_time += before_pause + pause.p_duration + copy[i].duration_op1;
                                         p_counter++;
@@ -156,29 +156,25 @@ namespace scheduing_fs_ts
                             else
                             {
                                 m1_time++;
-                                //Console.WriteLine("nie pasuje w chuj");
 
                             }
                         }
                     }
 
-                    // taskBox.Text += "Operacje 2" + System.Environment.NewLine;
+                 
                    
-                    for (int j = 0; j < copy.Count; j++)//WYGLĄDA OKEJ TERAZ WSZYSTKO ALE NIE JESTEM PEWIEN CZY ABY NA STOPRO TO JEST OKEJ MYŚLE ŻE MOGŁOBY TO WYMAGAC
-                        //GŁĘBSZEJ ANALIZY CZY ABY NAPEWNO SĄ DOBRZE OBLICZNE TE ZADANIA DRUGIE( czy nie należało by czasem zwiększać o jeden tak jak w pierwszych kiedy to nie można jeszcze
-                        //wrzucic zadania drugiego , pewnie czegoś poprostu nie rozumiem im so sorry ) dX
+                    for (int j = 0; j < copy.Count; j++)
                     {
-                       // Console.WriteLine("j iteration {0} , {1}", j , m2_time);
+                       
 
                         if (j > 0)
                         {
-                            if (end_op1[j] != 0 && end_op2[j - 1] != 0)//jesli operacja j na m1 zakonczona i  poprzedniua z m2 zakonczona
+                            if (end_op1[j] != 0 && end_op2[j - 1] != 0)
                             {
 
-                                // taskBox.Text += m2_time + System.Environment.NewLine;
-                                if (end_op2[j - 1] > end_op1[j])// jesli koniec operacji j - 1 na n2 maszynie mniejszy niz koniec operacji j na pierwszej
-                                {
-                                    m2_time = end_op2[j - 1];
+                                
+                                if (end_op2[j - 1] > end_op1[j])
+                                {  m2_time = end_op2[j - 1];
                                     m2_time += copy[j].duration_op2;
                                     end_op2[j] = m2_time;
                                 }
@@ -202,16 +198,13 @@ namespace scheduing_fs_ts
 
                         }
                     }
-                 //   Console.WriteLine("DUPA");
-
-                   // Console.WriteLine("{0}", m1_time);
-                 //   Console.WriteLine("{0}", m2_time);
+               
                 }
                 else { scheduled = true;
-                   // Console.WriteLine("DUPA2");
+                  
                 }
             }
-            // taskBox.Text += "Time of machine 1: " + m1_time + System.Environment.NewLine;
+           
             formobject.taskBox.Text += "Total time: " + m2_time + System.Environment.NewLine;
             return m2_time;
         }
@@ -326,12 +319,15 @@ namespace scheduing_fs_ts
               //  Console.WriteLine("{0}", split.Length);
                 //Console.WriteLine("{0};{1};{2};{3};{4};", split[0], split[1], split[2], split[3], split[4]);
                 Task TempLoad_task = new Task();//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
+                TempLoad_task.id = i;
                 Int32.TryParse(split[0], out TempLoad_task.duration_op1);
                 tasks1 += TempLoad_task.duration_op1;
                 Int32.TryParse(split[1], out TempLoad_task.duration_op2);
                 Int32.TryParse(split[2], out TempLoad_task.maszyna_op1);
                 Int32.TryParse(split[3], out TempLoad_task.maszyna_op2);
                 Int32.TryParse(split[4], out TempLoad_task.start);
+                t_time1 += TempLoad_task.duration_op1;
+                t_time2 += TempLoad_task.duration_op2;
                 loaded_tasks.Add(TempLoad_task);
             }
             Int32.TryParse(sr.ReadLine(), out pauses_count);
@@ -346,6 +342,7 @@ namespace scheduing_fs_ts
                 Int32.TryParse(split[2], out Temp_pause.p_start);
                 pauses1 += Temp_pause.p_duration + Temp_pause.p_start;
                 Temp_pause.p_end = Temp_pause.p_start + Temp_pause.p_duration;
+                p_time += Temp_pause.p_duration;
                 loaded_pauses.Add(Temp_pause);
 
             }
