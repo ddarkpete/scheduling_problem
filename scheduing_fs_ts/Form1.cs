@@ -56,10 +56,10 @@ namespace scheduing_fs_ts
         {
             string save_file = saveFileDialog1.FileName;
             Backend.Instance.save(save_file);
-           /* Backend.Instance.ScheduledTasks.Clear();
+           /Backend.Instance.ScheduledTasks.Clear();
             Backend.Instance.SortedPauses.Clear();
             Backend.Instance.Tasks.Clear();
-            Backend.Instance.Pauses.Clear();*/
+            Backend.Instance.Pauses.Clear();
         }
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)//mozna wpisywac liczbe zadan i enter
         {
