@@ -208,10 +208,10 @@ namespace scheduing_fs_ts
 
         public void tabu(Form1 form)
         {
-            List<Task> ActualSchedule = ScheduledTasks;
+            List<Task> ActualSchedule = new List<Task> (ScheduledTasks);
             int ActualScheduleTime = count_time(ActualSchedule, form);
 
-            List<Task> BestSchedule = ScheduledTasks;
+            List<Task> BestSchedule =new List<Task> (ScheduledTasks);
             int BestScheduleTime = ActualScheduleTime;
 
             List<Task> PreviousSchedule = new List<Task>();
@@ -233,6 +233,7 @@ namespace scheduing_fs_ts
                 {
                     if (BadChanges == 5)//zbyt wiele zlych zmian , trzeba pomieszac kolejnosc
                     {
+                        //Console.WriteLine("BEst na koniec0 {0}", count_time(BestSchedule, form));
                         Console.WriteLine("Minimum lokalne");
                         List<Task> Randomize = new List<Task>();
                         Randomize = ActualSchedule.OrderBy(item => rnd.Next()).ToList();
@@ -241,6 +242,7 @@ namespace scheduing_fs_ts
                         ActualScheduleTime = count_time(ActualSchedule, form);//obliczamy nowy aktualny czas dla pomieszanego
                         PreviousScheduleTime = ActualScheduleTime;
                         TabuChanges.Clear();
+                        //Console.WriteLine("BEst na koniec {0}", count_time(BestSchedule, form));
                         LocalMin = true;//konczymy lokalne poszukiwanie
                         break;
                     }
@@ -276,12 +278,12 @@ namespace scheduing_fs_ts
                              ActualSchedule[index_2st] = TempTask;*/
 
                             
-                            var index_2 = ActualSchedule.FindIndex(x => x.id == index_2st);
-                            Task temptask = new scheduing_fs_ts.Task();
-                            temptask=ActualSchedule[index_2];
-                            ActualSchedule.RemoveAt(index_2);
-                            var index_1 = ActualSchedule.FindIndex(x => x.id == index_1st);
-                            ActualSchedule.Insert(index_1, temptask);
+                           // var index_2 = ActualSchedule.FindIndex(x => x.id == index_2st); //fajno ale mamy już indeksy w zmiennych index_1st i index_2st i ich idki w changedid 1 i 2
+                            Task TempTask = new Task();
+                            TempTask = ActualSchedule[index_2st];
+                            ActualSchedule.RemoveAt(index_2st);
+                            //var index_1 = ActualSchedule.FindIndex(x => x.id == index_1st);//tak samo jak wyżej
+                            ActualSchedule.Insert(index_1st, TempTask);
 
 
                             ActualScheduleTime = count_time(ActualSchedule, form);//liczymy czas po zamianie
@@ -312,8 +314,9 @@ namespace scheduing_fs_ts
                     else if(ActualScheduleTime < BestScheduleTime)//actual jest lepszy <wow> od najlepszego :OOOO
                     {
                         Console.WriteLine("LEPSZY FHUI {0}", ActualScheduleTime);
-                        BestSchedule = ActualSchedule;
+                        BestSchedule = ActualSchedule.ToList();//O TO BYŁO CAŁE ZAMIESZANIE
                         BestScheduleTime = ActualScheduleTime;
+                        continue;
                        // Console.WriteLine("LEPSZY FHUI bestowy czas {0}",count_time(BestSchedule,form));
                     }
                     
