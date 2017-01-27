@@ -266,6 +266,10 @@ namespace scheduing_fs_ts
                         }
                         BadChanges++;
                     }
+                    else if(ActualScheduleTime == PreviousScheduleTime)
+                    {
+                        BadChanges++;
+                    }
                     else if(ActualScheduleTime >= BestScheduleTime)//jesli czas jest gorszy lub rowny najlepszemu , to sprobujmy go poprawic
                     {
                         Console.WriteLine("Próba poprawy");
