@@ -129,7 +129,7 @@ namespace scheduing_fs_ts
                         while (end_op1[i] == 0)
                         {
                            
-                            if (copy[i].start >= m1_time && end_op1[i] == 0)
+                            if (copy[i].start <= m1_time && end_op1[i] == 0)
                             {
                                 //int p_counter = 0;
                                 
