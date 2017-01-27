@@ -37,13 +37,13 @@ namespace scheduing_fs_ts
             Int32.TryParse(textBox1.Text, out Backend.Instance.N);
             Backend.Instance.task_generator();
             Backend.Instance.pause_generator();
-            Backend.Instance.SortedTasksglobal = Backend.Instance.Tasks.OrderBy(o => o.start).ToList();
-            Backend.Instance.SortedPauses = Backend.Instance.Pauses.OrderBy(o => o.p_start).ToList();
+            //Backend.Instance.ScheduledTasks = Backend.Instance.Tasks.OrderBy(o => o.start).ToList();
+            //Backend.Instance.SortedPauses = Backend.Instance.Pauses.OrderBy(o => o.p_start).ToList();
           //  Backend.Instance.count_time(Backend.Instance.SortedTasksglobal, this);// tabu dopisać 
            // Backend.Instance.tabu(this);
             //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
             saveFileDialog1.ShowDialog();
-            Backend.Instance.SortedTasksglobal.Clear();
+            Backend.Instance.ScheduledTasks.Clear();
             Backend.Instance.SortedPauses.Clear();
             Backend.Instance.Tasks.Clear();
             Backend.Instance.Pauses.Clear();
@@ -85,13 +85,15 @@ namespace scheduing_fs_ts
 
         private void tabu_button_Click(object sender, EventArgs e)
         {
+            tabu_button.Enabled = false;
             Backend.Instance.tabu(this);
-            Backend.Instance.SortedTasksglobal.Clear();
+            Backend.Instance.ScheduledTasks.Clear();
             Backend.Instance.SortedPauses.Clear();
             Backend.Instance.Tasks.Clear();
             Backend.Instance.Pauses.Clear();
             Backend.Instance.time_mach1 = 0;
             Backend.Instance.time_mach2 = 0;
+            tabu_button.Enabled = true;
 
         }
     }

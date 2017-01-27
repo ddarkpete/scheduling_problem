@@ -32,7 +32,7 @@ namespace scheduing_fs_ts
         public int time_mach2 = 0;
 
         public List<Task> Tasks = new List<Task>();
-        public List<Task> SortedTasksglobal = new List<Task>();
+        public List<Task> ScheduledTasks = new List<Task>();
 
         public List<Pause> Pauses = new List<Pause>();
         public List<Pause> SortedPauses = new List<Pause>();
@@ -218,101 +218,92 @@ namespace scheduing_fs_ts
 
         public void tabu(Form1 form)
         {
-            List<Task> BestSchedule = new List<Task>();
-            List<Task> ActualSchedule = new List<Task>();
-            List<Task> PreviouslSchedule = new List<Task>();
-            List<TabuChange> TabuElements = new List<TabuChange>();
-            ActualSchedule = SortedTasksglobal;
-            BestSchedule = SortedTasksglobal;
-            int BestScheduleTime = count_time(SortedTasksglobal, form);
-            int ActualScheduleTime=0;
-            int PreviousScheduleTime = BestScheduleTime;
-           // Console.WriteLine("Najlepszy czas: {0} licznosc{1}", BestScheduleTime, SortedTasksglobal.Count);
-            int prev_pivot_1=0;
-            int prev_pivot_2=0;
+            List<Task> ActualSchedule = ScheduledTasks;
+            int ActualScheduleTime = count_time(ActualSchedule, form);
 
+            List<Task> BestSchedule = ScheduledTasks;
+            int BestScheduleTime = ActualScheduleTime;
 
-            for (int i = 0; i < SortedTasksglobal.Count; i++)//ile razy ma się wykonywywywać tabu?
+            List<Task> PreviousSchedule = ScheduledTasks;
+            int PreviousScheduleTime = ActualScheduleTime;
+
+            List<TabuChange> TabuChanges = new List<TabuChange>();
+            int ChangedId1 = 0;
+            int ChangedId2 = 0;
+
+            for(int i = 0; i < ScheduledTasks.Count; i++)
             {
-                //Console.WriteLine("dziejesiedupa");
                 bool LocalMin = false;
                 int BadChanges = 0;
-                while(LocalMin == false)
+                Console.WriteLine("*");
+
+                while(!(LocalMin))
                 {
-                    //System.Console.WriteLine("actial time {0}", ActualScheduleTime);
-                    ActualScheduleTime = count_time(ActualSchedule, form);
-                    if(BestScheduleTime > ActualScheduleTime)//jak aktualne lepsze niż najlepsze
+                    if(ActualScheduleTime > PreviousScheduleTime)//Czas sie pogorszył musimy wrócić do poprzedniego rozwiązania
                     {
-                        BestSchedule = ActualSchedule;
-                        BestScheduleTime = ActualScheduleTime;
-                    }
-                    if(ActualScheduleTime > PreviousScheduleTime)
-                    {
-                        //Powrót do poprzedniego uszeregowania
-                        //dodanie ostatniej zmiany do listy tabu
-                        //zwiększenie bad changes
-                        ActualSchedule = PreviouslSchedule;
+                        ActualSchedule = PreviousSchedule;
                         ActualScheduleTime = PreviousScheduleTime;
+
                         TabuChange Tc = new TabuChange();
-                        Tc.tabu_el_1 = prev_pivot_1;
-                        Tc.tabu_el_2 = prev_pivot_2;
-                        if(TabuElements.Count < ActualSchedule.Count)// to trzeba zmienic - ilosc elementów tabu
+                        Tc.tabu_el_1 = ChangedId1;
+                        Tc.tabu_el_2 = ChangedId2;
+
+                        if (TabuChanges.Count < ScheduledTasks.Count/6)// to trzeba zmienic - ilosc elementów tabu
                         {
-                            TabuElements.Add(Tc);
+                            TabuChanges.Add(Tc);
                         }
                         else
                         {
-                            TabuElements.RemoveAt(0);// wyrzuc pierwszy
-                            TabuElements.Add(Tc);
-
+                            TabuChanges.RemoveAt(0);// wyrzuc pierwszy
+                            TabuChanges.Add(Tc);
                         }
                         BadChanges++;
-                        
-
-
                     }
-                    else
+                    else if(ActualScheduleTime >= BestScheduleTime)//jesli czas jest gorszy lub rowny najlepszemu , to sprobujmy go poprawic
                     {
                         PreviousScheduleTime = ActualScheduleTime;
-                        PreviouslSchedule = ActualSchedule;
+                        PreviousSchedule = ActualSchedule;
+
                         int index_1st = rnd.Next(ActualSchedule.Count);
                         int index_2st = rnd.Next(ActualSchedule.Count);
                         while (index_1st == index_2st) { index_2st = rnd.Next(ActualSchedule.Count); }//żeby miec pewność że są różne
-                        prev_pivot_1 = ActualSchedule[index_1st].id;//zeby pamietac ostatnia zmiane
-                        prev_pivot_2 = ActualSchedule[index_2st].id;
+
+                        ChangedId1 = ActualSchedule[index_1st].id;//zeby pamietac ostatnia zmiane
+                        ChangedId2 = ActualSchedule[index_2st].id;
+
                         TabuChange TempChange = new TabuChange();
                         TempChange.tabu_el_1 = ActualSchedule[index_1st].id;
                         TempChange.tabu_el_2 = ActualSchedule[index_2st].id;
-                        if (!(TabuElements.Contains(TempChange)))//jak już była taka zmiana
+
+                        if (!(TabuChanges.Contains(TempChange)))//jak N I E ma takiej zmiany na liście zakazanych to zamieniamy
                         {
                             Task TempTask = ActualSchedule[index_2st];
                             ActualSchedule[index_2st] = ActualSchedule[index_1st];
                             ActualSchedule[index_1st] = TempTask;
+
+                            ActualScheduleTime = count_time(ActualSchedule, form);//liczymy czas po zamianie
                         }
-                        
-                        //losowa zmiana 2 elementów w actual
-                        //obliczenie nowej sumy dla actual
+
                     }
-
-
-                    if(BadChanges == SortedTasksglobal.Count/5)//ile złych ruchów chcemy dopuścić?
+                    else if(ActualScheduleTime < BestScheduleTime)//actual jest lepszy <wow> od najlepszego :OOOO
+                    {
+                        Console.WriteLine("LEPSZY FHUI");
+                        BestSchedule = ActualSchedule;
+                        BestScheduleTime = ActualScheduleTime;
+                    }
+                    if(BadChanges == ScheduledTasks.Count/5)//zbyt wiele zlych zmian , trzeba pomieszac kolejnosc
                     {
                         List<Task> Randomize = new List<Task>();
                         Randomize = ActualSchedule.OrderBy(item => rnd.Next()).ToList();
                         ActualSchedule = Randomize;
-                        LocalMin = true;
-                        TabuElements.Clear();
-
+                        ActualScheduleTime = count_time(ActualSchedule, form);//obliczamy nowy aktualny czas dla pomieszanego
+                        TabuChanges.Clear();
+                        LocalMin = true;//konczymy lokalne poszukiwanie
                     }
                 }
-
             }
-
-
-
-
-            Console.WriteLine("Najlepszy czas: {0} licznosc{1}", BestScheduleTime , SortedTasksglobal.Count);
-            
+            Console.WriteLine("Najlepszy: {0}", BestScheduleTime);
+            Console.WriteLine("Najlepszy obliczony tutej: {0}", count_time(BestSchedule, form));
         }
 
 
@@ -326,6 +317,7 @@ namespace scheduing_fs_ts
             List<Pause> loaded_pauses = new List<Pause>();
             StreamReader sr = new StreamReader(path);
             loaded_instance_id = sr.ReadLine();
+            int tasks1 = 0;
             Int32.TryParse(sr.ReadLine(), out tasks_count);
             for (int i = 0; i < tasks_count; i++)
             {
@@ -335,6 +327,7 @@ namespace scheduing_fs_ts
                 //Console.WriteLine("{0};{1};{2};{3};{4};", split[0], split[1], split[2], split[3], split[4]);
                 Task TempLoad_task = new Task();//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
                 Int32.TryParse(split[0], out TempLoad_task.duration_op1);
+                tasks1 += TempLoad_task.duration_op1;
                 Int32.TryParse(split[1], out TempLoad_task.duration_op2);
                 Int32.TryParse(split[2], out TempLoad_task.maszyna_op1);
                 Int32.TryParse(split[3], out TempLoad_task.maszyna_op2);
@@ -342,6 +335,7 @@ namespace scheduing_fs_ts
                 loaded_tasks.Add(TempLoad_task);
             }
             Int32.TryParse(sr.ReadLine(), out pauses_count);
+            int pauses1 = 0;
             for (int j = 0; j < pauses_count; j++)
             {
                 Pause Temp_pause = new Pause();
@@ -350,12 +344,14 @@ namespace scheduing_fs_ts
                 Int32.TryParse(split[0], out Temp_pause.p_id);
                 Int32.TryParse(split[1], out Temp_pause.p_duration);
                 Int32.TryParse(split[2], out Temp_pause.p_start);
+                pauses1 += Temp_pause.p_duration + Temp_pause.p_start;
                 Temp_pause.p_end = Temp_pause.p_start + Temp_pause.p_duration;
                 loaded_pauses.Add(Temp_pause);
 
             }
-            SortedTasksglobal = loaded_tasks;
+            ScheduledTasks = loaded_tasks;
             Pauses = loaded_pauses;
+            System.Console.WriteLine("taski op1 {0}", tasks1);
 
 
         }
@@ -366,7 +362,7 @@ namespace scheduing_fs_ts
             sr.WriteLine("***{0}***", instance_nO); //tu numer instancj8i zrob PIt
             instance_nO++;
             sr.WriteLine("{0}", Tasks.Count);
-            foreach (Task taskk in SortedTasksglobal)
+            foreach (Task taskk in ScheduledTasks)
             {
              //   Console.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
                 sr.WriteLine("{0};{1};{2};{3};{4};", taskk.duration_op1, taskk.duration_op2, taskk.maszyna_op1, taskk.maszyna_op2, taskk.start);//czas_operacji1_1; czas_operacji2_1; nr_maszyny_dla_op1_1; nr_maszyny_dla_op1_2; 
