@@ -214,10 +214,10 @@ namespace scheduing_fs_ts
             List<Task> BestSchedule = ScheduledTasks;
             int BestScheduleTime = ActualScheduleTime;
 
-            List<Task> PreviousSchedule = ScheduledTasks;
-            int PreviousScheduleTime = ActualScheduleTime;
+            List<Task> PreviousSchedule = new List<Task>();
+            int PreviousScheduleTime = BestScheduleTime * 2;
 
-            Console.WriteLine("{0} {1} {2}", ActualScheduleTime, BestScheduleTime, PreviousScheduleTime);
+            Console.WriteLine("{0} {1}", ActualScheduleTime, BestScheduleTime);
 
             List<TabuChange> TabuChanges = new List<TabuChange>();
             int ChangedId1 = 0;
@@ -244,32 +244,13 @@ namespace scheduing_fs_ts
                         LocalMin = true;//konczymy lokalne poszukiwanie
                         break;
                     }
-                    if (ActualScheduleTime > PreviousScheduleTime)//Czas sie pogorszył musimy wrócić do poprzedniego rozwiązania
+                   /* if (ActualScheduleTime > PreviousScheduleTime)//Czas sie pogorszył musimy wrócić do poprzedniego rozwiązania
                     {
-                        Console.WriteLine("Gorszy niz poprzedni");
+                        Console.WriteLine("Gorszy niz poprzedni"); 
 
-                        ActualSchedule = PreviousSchedule;
-                        ActualScheduleTime = PreviousScheduleTime;
-
-                        TabuChange Tc = new TabuChange();
-                        Tc.tabu_el_1 = ChangedId1;
-                        Tc.tabu_el_2 = ChangedId2;
-
-                        if (TabuChanges.Count < ScheduledTasks.Count/6)// to trzeba zmienic - ilosc elementów tabu
-                        {
-                            TabuChanges.Add(Tc);
-                        }
-                        else
-                        {
-                            TabuChanges.RemoveAt(0);// wyrzuc pierwszy
-                            TabuChanges.Add(Tc);
-                        }
-                        BadChanges++;
-                    }
-                    else if(ActualScheduleTime == PreviousScheduleTime)
-                    {
-                        BadChanges++;
-                    }
+                        
+                    }*/
+                   
                     else if(ActualScheduleTime >= BestScheduleTime)//jesli czas jest gorszy lub rowny najlepszemu , to sprobujmy go poprawic
                     {
                         Console.WriteLine("Próba poprawy");
@@ -294,6 +275,27 @@ namespace scheduing_fs_ts
                             ActualSchedule[index_2st] = TempTask;
 
                             ActualScheduleTime = count_time(ActualSchedule, form);//liczymy czas po zamianie
+                            if(ActualScheduleTime >= PreviousScheduleTime)// pogorszenie lub brak polepszenia
+                            {
+                                Console.WriteLine("        Poprawa dała to samo lub nawet gorzej");
+                                ActualSchedule = PreviousSchedule;
+                                ActualScheduleTime = PreviousScheduleTime;
+
+                                TabuChange Tc = new TabuChange();
+                                Tc.tabu_el_1 = ChangedId1;
+                                Tc.tabu_el_2 = ChangedId2;
+
+                                if (TabuChanges.Count < ScheduledTasks.Count / 6)// to trzeba zmienic - ilosc elementów tabu
+                                {
+                                    TabuChanges.Add(Tc);
+                                }
+                                else
+                                {
+                                    TabuChanges.RemoveAt(0);// wyrzuc pierwszy
+                                    TabuChanges.Add(Tc);
+                                }
+                                BadChanges++;
+                            }
                         }
 
                     }
