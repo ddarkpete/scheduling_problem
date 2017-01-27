@@ -129,29 +129,25 @@ namespace scheduing_fs_ts
                         while (end_op1[i] == 0)
                         {
                            
-                            if (copy[i].start <= m1_time && end_op1[i] == 0)
+                            if (copy[i].start >= m1_time && end_op1[i] == 0)
                             {
-                                int p_counter = 0;
+                                //int p_counter = 0;
                                 
-                                foreach (Pause pause in Pauses)
+                                for(int p =0; p < SortedPauses.Count; p++)
                                 {
-                                    if (m1_time <= pause.p_start && pause.p_start < (m1_time + copy[i].duration_op1))
+                                    if (m1_time <= SortedPauses[p].p_start && SortedPauses[p].p_start < (m1_time + copy[i].duration_op1))
                                     {
 
-                                        int before_pause = pause.p_start - m1_time;
-                                        m1_time += before_pause + pause.p_duration + copy[i].duration_op1;
-                                        p_counter++;
+                                        int before_pause = SortedPauses[p].p_start - m1_time;
+                                        m1_time += before_pause + SortedPauses[p].p_duration;//+ copy[i].duration_op1;
+                                        //p_counter++;
 
                                     }
 
                                 }
-                                if (p_counter == 0)
-                                {
-                                    m1_time += copy[i].duration_op1;
-                                    end_op1[i] = m1_time;
-                                    break;
-                                }
-
+                                m1_time += copy[i].duration_op1;
+                                end_op1[i] = m1_time;
+                                //break;
                             }
                             else
                             {
@@ -173,8 +169,9 @@ namespace scheduing_fs_ts
                             {
 
                                 
-                                if (end_op2[j - 1] > end_op1[j])
-                                {  m2_time = end_op2[j - 1];
+                                if (end_op2[j - 1] >= end_op1[j])
+                                {
+                                    m2_time = end_op2[j - 1];
                                     m2_time += copy[j].duration_op2;
                                     end_op2[j] = m2_time;
                                 }
@@ -236,6 +233,7 @@ namespace scheduing_fs_ts
                 {
                     if (BadChanges == ScheduledTasks.Count / 5)//zbyt wiele zlych zmian , trzeba pomieszac kolejnosc
                     {
+                        Console.WriteLine("Minimum lokalne");
                         List<Task> Randomize = new List<Task>();
                         Randomize = ActualSchedule.OrderBy(item => rnd.Next()).ToList();
                         ActualSchedule = Randomize;
@@ -248,6 +246,8 @@ namespace scheduing_fs_ts
                     }
                     if (ActualScheduleTime > PreviousScheduleTime)//Czas sie pogorszył musimy wrócić do poprzedniego rozwiązania
                     {
+                        Console.WriteLine("Gorszy niz poprzedni");
+
                         ActualSchedule = PreviousSchedule;
                         ActualScheduleTime = PreviousScheduleTime;
 
@@ -268,6 +268,7 @@ namespace scheduing_fs_ts
                     }
                     else if(ActualScheduleTime >= BestScheduleTime)//jesli czas jest gorszy lub rowny najlepszemu , to sprobujmy go poprawic
                     {
+                        Console.WriteLine("Próba poprawy");
                         PreviousScheduleTime = ActualScheduleTime;
                         PreviousSchedule = ActualSchedule;
 
@@ -297,7 +298,7 @@ namespace scheduing_fs_ts
                         Console.WriteLine("LEPSZY FHUI {0}", ActualScheduleTime);
                         BestSchedule = ActualSchedule;
                         BestScheduleTime = ActualScheduleTime;
-                        Console.WriteLine("LEPSZY FHUI bestowy czas {0}",count_time(BestSchedule,form));
+                       // Console.WriteLine("LEPSZY FHUI bestowy czas {0}",count_time(BestSchedule,form));
                     }
                     
                 }
@@ -354,7 +355,7 @@ namespace scheduing_fs_ts
 
             }
             ScheduledTasks = loaded_tasks;
-            Pauses = loaded_pauses;
+            SortedPauses = loaded_pauses.OrderBy(o => o.p_start).ToList();
             System.Console.WriteLine("taski op1 {0}", tasks1);
 
 
