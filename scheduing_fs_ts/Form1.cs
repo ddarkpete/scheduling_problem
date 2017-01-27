@@ -43,10 +43,7 @@ namespace scheduing_fs_ts
            // Backend.Instance.tabu(this);
             //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
             saveFileDialog1.ShowDialog();
-            Backend.Instance.ScheduledTasks.Clear();
-            Backend.Instance.SortedPauses.Clear();
-            Backend.Instance.Tasks.Clear();
-            Backend.Instance.Pauses.Clear();
+           
             textBox1.Text = "";
             //Backend.Instance.time_mach1 = 0;
             //Backend.Instance.time_mach2 = 0;
@@ -59,6 +56,10 @@ namespace scheduing_fs_ts
         {
             string save_file = saveFileDialog1.FileName;
             Backend.Instance.save(save_file);
+           /* Backend.Instance.ScheduledTasks.Clear();
+            Backend.Instance.SortedPauses.Clear();
+            Backend.Instance.Tasks.Clear();
+            Backend.Instance.Pauses.Clear();*/
         }
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)//mozna wpisywac liczbe zadan i enter
         {
@@ -72,15 +73,14 @@ namespace scheduing_fs_ts
 
         private void load_button_Click(object sender, EventArgs e)
         {
-            Console.Write("cycki");
             openFileDialog1.ShowDialog();
-            Console.Write("cycki");
-        }
+         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             string load_file = openFileDialog1.FileName;
             Backend.Instance.load(load_file);
+
         }
 
         private void tabu_button_Click(object sender, EventArgs e)
