@@ -231,7 +231,7 @@ namespace scheduing_fs_ts
 
                 while(!(LocalMin))
                 {
-                    if (BadChanges == ScheduledTasks.Count / 5)//zbyt wiele zlych zmian , trzeba pomieszac kolejnosc
+                    if (BadChanges == 5)//zbyt wiele zlych zmian , trzeba pomieszac kolejnosc
                     {
                         Console.WriteLine("Minimum lokalne");
                         List<Task> Randomize = new List<Task>();
@@ -263,6 +263,7 @@ namespace scheduing_fs_ts
 
                         ChangedId1 = ActualSchedule[index_1st].id;//zeby pamietac ostatnia zmiane
                         ChangedId2 = ActualSchedule[index_2st].id;
+                        
 
                         TabuChange TempChange = new TabuChange();
                         TempChange.tabu_el_1 = ActualSchedule[index_1st].id;
@@ -270,9 +271,18 @@ namespace scheduing_fs_ts
 
                         if (!(TabuChanges.Contains(TempChange)))//jak N I E ma takiej zmiany na liście zakazanych to zamieniamy
                         {
-                            Task TempTask = ActualSchedule[index_1st];
-                            ActualSchedule[index_1st] = ActualSchedule[index_2st];
-                            ActualSchedule[index_2st] = TempTask;
+                            /* Task TempTask = ActualSchedule[index_1st];
+                             ActualSchedule[index_1st] = ActualSchedule[index_2st];
+                             ActualSchedule[index_2st] = TempTask;*/
+
+                            
+                            var index_2 = ActualSchedule.FindIndex(x => x.id == index_2st);
+                            Task temptask = new scheduing_fs_ts.Task();
+                            temptask=ActualSchedule[index_2];
+                            ActualSchedule.RemoveAt(index_2);
+                            var index_1 = ActualSchedule.FindIndex(x => x.id == index_1st);
+                            ActualSchedule.Insert(index_1, temptask);
+
 
                             ActualScheduleTime = count_time(ActualSchedule, form);//liczymy czas po zamianie
                             if(ActualScheduleTime >= PreviousScheduleTime)// pogorszenie lub brak polepszenia
@@ -285,7 +295,7 @@ namespace scheduing_fs_ts
                                 Tc.tabu_el_1 = ChangedId1;
                                 Tc.tabu_el_2 = ChangedId2;
 
-                                if (TabuChanges.Count < ScheduledTasks.Count / 6)// to trzeba zmienic - ilosc elementów tabu
+                                if (TabuChanges.Count < 5)// to trzeba zmienic - ilosc elementów tabu
                                 {
                                     TabuChanges.Add(Tc);
                                 }
