@@ -220,6 +220,8 @@ namespace scheduing_fs_ts
             List<Task> PreviousSchedule = ScheduledTasks;
             int PreviousScheduleTime = ActualScheduleTime;
 
+            Console.WriteLine("{0} {1} {2}", ActualScheduleTime, BestScheduleTime, PreviousScheduleTime);
+
             List<TabuChange> TabuChanges = new List<TabuChange>();
             int ChangedId1 = 0;
             int ChangedId2 = 0;
@@ -232,7 +234,19 @@ namespace scheduing_fs_ts
 
                 while(!(LocalMin))
                 {
-                    if(ActualScheduleTime > PreviousScheduleTime)//Czas sie pogorszył musimy wrócić do poprzedniego rozwiązania
+                    if (BadChanges == ScheduledTasks.Count / 5)//zbyt wiele zlych zmian , trzeba pomieszac kolejnosc
+                    {
+                        List<Task> Randomize = new List<Task>();
+                        Randomize = ActualSchedule.OrderBy(item => rnd.Next()).ToList();
+                        ActualSchedule = Randomize;
+                        PreviousSchedule = ActualSchedule;
+                        ActualScheduleTime = count_time(ActualSchedule, form);//obliczamy nowy aktualny czas dla pomieszanego
+                        PreviousScheduleTime = ActualScheduleTime;
+                        TabuChanges.Clear();
+                        LocalMin = true;//konczymy lokalne poszukiwanie
+                        break;
+                    }
+                    if (ActualScheduleTime > PreviousScheduleTime)//Czas sie pogorszył musimy wrócić do poprzedniego rozwiązania
                     {
                         ActualSchedule = PreviousSchedule;
                         ActualScheduleTime = PreviousScheduleTime;
@@ -270,9 +284,9 @@ namespace scheduing_fs_ts
 
                         if (!(TabuChanges.Contains(TempChange)))//jak N I E ma takiej zmiany na liście zakazanych to zamieniamy
                         {
-                            Task TempTask = ActualSchedule[index_2st];
-                            ActualSchedule[index_2st] = ActualSchedule[index_1st];
-                            ActualSchedule[index_1st] = TempTask;
+                            Task TempTask = ActualSchedule[index_1st];
+                            ActualSchedule[index_1st] = ActualSchedule[index_2st];
+                            ActualSchedule[index_2st] = TempTask;
 
                             ActualScheduleTime = count_time(ActualSchedule, form);//liczymy czas po zamianie
                         }
@@ -280,19 +294,12 @@ namespace scheduing_fs_ts
                     }
                     else if(ActualScheduleTime < BestScheduleTime)//actual jest lepszy <wow> od najlepszego :OOOO
                     {
-                        Console.WriteLine("LEPSZY FHUI");
+                        Console.WriteLine("LEPSZY FHUI {0}", ActualScheduleTime);
                         BestSchedule = ActualSchedule;
                         BestScheduleTime = ActualScheduleTime;
+                        Console.WriteLine("LEPSZY FHUI bestowy czas {0}",count_time(BestSchedule,form));
                     }
-                    if(BadChanges == ScheduledTasks.Count/5)//zbyt wiele zlych zmian , trzeba pomieszac kolejnosc
-                    {
-                        List<Task> Randomize = new List<Task>();
-                        Randomize = ActualSchedule.OrderBy(item => rnd.Next()).ToList();
-                        ActualSchedule = Randomize;
-                        ActualScheduleTime = count_time(ActualSchedule, form);//obliczamy nowy aktualny czas dla pomieszanego
-                        TabuChanges.Clear();
-                        LocalMin = true;//konczymy lokalne poszukiwanie
-                    }
+                    
                 }
             }
             Console.WriteLine("Najlepszy: {0}", BestScheduleTime);
