@@ -220,10 +220,9 @@ namespace scheduing_fs_ts
             Console.WriteLine("{0} {1}", ActualScheduleTime, BestScheduleTime);
 
             List<TabuChange> TabuChanges = new List<TabuChange>();
-            int ChangedId1 = 0;
-            int ChangedId2 = 0;
+         
 
-            for(int i = 0; i < ScheduledTasks.Count; i++)
+            for(int i = 0; i < ScheduledTasks.Count*50; i++)
             {
                 bool LocalMin = false;
                 int BadChanges = 0;
@@ -231,7 +230,7 @@ namespace scheduing_fs_ts
 
                 while(!(LocalMin))
                 {
-                    if (BadChanges == 5)//zbyt wiele zlych zmian , trzeba pomieszac kolejnosc
+                    if (BadChanges == 2)//zbyt wiele zlych zmian , trzeba pomieszac kolejnosc
                     {
                         //Console.WriteLine("BEst na koniec0 {0}", count_time(BestSchedule, form));
                         Console.WriteLine("Minimum lokalne");
@@ -259,17 +258,17 @@ namespace scheduing_fs_ts
                         PreviousScheduleTime = ActualScheduleTime;
                         PreviousSchedule = ActualSchedule;
 
-                        int index_1st = rnd.Next(ActualSchedule.Count);
-                        int index_2st = rnd.Next(ActualSchedule.Count);
+                        int index_1st = rnd.Next(ActualSchedule.Count);//losujemy id własne
+                        int index_2st = rnd.Next(ActualSchedule.Count);//losujemy id własne
                         while (index_1st == index_2st) { index_2st = rnd.Next(ActualSchedule.Count); }//żeby miec pewność że są różne
-
-                        ChangedId1 = ActualSchedule[index_1st].id;//zeby pamietac ostatnia zmiane
-                        ChangedId2 = ActualSchedule[index_2st].id;
+                        var index_2 = ActualSchedule.FindIndex(x => x.id == index_2st);// szukam gdzie w tablicy jest zadanie o takim id własnym
+                       
+                        
                         
 
                         TabuChange TempChange = new TabuChange();
-                        TempChange.tabu_el_1 = ActualSchedule[index_1st].id;
-                        TempChange.tabu_el_2 = ActualSchedule[index_2st].id;
+                        TempChange.tabu_el_1 = index_1st;//zapisuje to id własne
+                        TempChange.tabu_el_2 = index_2st;// zapisuje to id własne
 
                         if (!(TabuChanges.Contains(TempChange)))//jak N I E ma takiej zmiany na liście zakazanych to zamieniamy
                         {
@@ -278,12 +277,12 @@ namespace scheduing_fs_ts
                              ActualSchedule[index_2st] = TempTask;*/
 
                             
-                           // var index_2 = ActualSchedule.FindIndex(x => x.id == index_2st); //fajno ale mamy już indeksy w zmiennych index_1st i index_2st i ich idki w changedid 1 i 2
+                        
                             Task TempTask = new Task();
                             TempTask = ActualSchedule[index_2st];
-                            ActualSchedule.RemoveAt(index_2st);
-                            //var index_1 = ActualSchedule.FindIndex(x => x.id == index_1st);//tak samo jak wyżej
-                            ActualSchedule.Insert(index_1st, TempTask);
+                            ActualSchedule.RemoveAt(index_2st);//usuwam zadanie które id własne jest takie jakie wylosowane (patrz 264)
+                            var index_1 = ActualSchedule.FindIndex(x => x.id == index_1st);//szukam gdzie w liscie jest zadanie o wylosowanym id
+                            ActualSchedule.Insert(index_1st, TempTask); // wstawiam przed to zadanie zadanie o id 2
 
 
                             ActualScheduleTime = count_time(ActualSchedule, form);//liczymy czas po zamianie
@@ -293,18 +292,16 @@ namespace scheduing_fs_ts
                                 ActualSchedule = PreviousSchedule;
                                 ActualScheduleTime = PreviousScheduleTime;
 
-                                TabuChange Tc = new TabuChange();
-                                Tc.tabu_el_1 = ChangedId1;
-                                Tc.tabu_el_2 = ChangedId2;
+                           
 
                                 if (TabuChanges.Count < 5)// to trzeba zmienic - ilosc elementów tabu
                                 {
-                                    TabuChanges.Add(Tc);
+                                    TabuChanges.Add(TempChange);
                                 }
                                 else
                                 {
                                     TabuChanges.RemoveAt(0);// wyrzuc pierwszy
-                                    TabuChanges.Add(Tc);
+                                    TabuChanges.Add(TempChange);
                                 }
                                 BadChanges++;
                             }
