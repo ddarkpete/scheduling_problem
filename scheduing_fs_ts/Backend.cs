@@ -101,7 +101,7 @@ namespace scheduing_fs_ts
         }
        
 
-        public int count_time(List<Task> SortedTasks, Form1 formobject)// JESZCZE NIE OK 
+        public int count_time(List<Task> SortedTasks, Form1 formobject)
         {
 
             int m1_time = 0;
@@ -400,6 +400,12 @@ namespace scheduing_fs_ts
 
             sr.WriteLine("***EOF***");
             sr.Close();
+        }
+
+        public void save_schedule(List<Task> Result)
+        {
+
+
         }
 
        
