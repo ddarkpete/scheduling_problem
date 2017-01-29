@@ -25,6 +25,7 @@ namespace scheduing_fs_ts
             }
         }
         public string loaded_instance_id;
+        public string loaded_instance_path;
         public int instance_nO = 0;
         public int N = 30;
         Random rnd = new Random();
@@ -210,6 +211,7 @@ namespace scheduing_fs_ts
         {
             List<Task> ActualSchedule = new List<Task> (ScheduledTasks);
             int ActualScheduleTime = count_time(ActualSchedule, form);
+            int start_time = ActualScheduleTime;
 
             List<Task> BestSchedule =new List<Task> (ScheduledTasks);
             int BestScheduleTime = ActualScheduleTime;
@@ -220,20 +222,20 @@ namespace scheduing_fs_ts
             Console.WriteLine("{0} {1}", ActualScheduleTime, BestScheduleTime);
 
             List<TabuChange> TabuChanges = new List<TabuChange>();
-         
 
-            for(int i = 0; i < ScheduledTasks.Count*50; i++)
+            Console.WriteLine("Wyszukiwanie...");
+            for (int i = 0; i < ScheduledTasks.Count*50; i++)
             {
                 bool LocalMin = false;
                 int BadChanges = 0;
-                Console.WriteLine("*");
+                
 
                 while(!(LocalMin))
                 {
                     if (BadChanges == 2)//zbyt wiele zlych zmian , trzeba pomieszac kolejnosc
                     {
                         //Console.WriteLine("BEst na koniec0 {0}", count_time(BestSchedule, form));
-                        Console.WriteLine("Minimum lokalne");
+                        //Console.WriteLine("Minimum lokalne");
                         List<Task> Randomize = new List<Task>();
                         Randomize = ActualSchedule.OrderBy(item => rnd.Next()).ToList();
                         ActualSchedule = Randomize;
@@ -254,7 +256,7 @@ namespace scheduing_fs_ts
                    
                     else if(ActualScheduleTime >= BestScheduleTime)//jesli czas jest gorszy lub rowny najlepszemu , to sprobujmy go poprawic
                     {
-                        Console.WriteLine("Próba poprawy");
+                        //Console.WriteLine("Próba poprawy");
                         PreviousScheduleTime = ActualScheduleTime;
                         PreviousSchedule = ActualSchedule;
 
@@ -288,7 +290,7 @@ namespace scheduing_fs_ts
                             ActualScheduleTime = count_time(ActualSchedule, form);//liczymy czas po zamianie
                             if(ActualScheduleTime >= PreviousScheduleTime)// pogorszenie lub brak polepszenia
                             {
-                                Console.WriteLine("        Poprawa dała to samo lub nawet gorzej");
+                                //Console.WriteLine("        Poprawa dała to samo lub nawet gorzej");
                                 ActualSchedule = PreviousSchedule;
                                 ActualScheduleTime = PreviousScheduleTime;
 
@@ -310,7 +312,7 @@ namespace scheduing_fs_ts
                     }
                     else if(ActualScheduleTime < BestScheduleTime)//actual jest lepszy <wow> od najlepszego :OOOO
                     {
-                        Console.WriteLine("LEPSZY FHUI {0}", ActualScheduleTime);
+                        //Console.WriteLine("LEPSZY FHUI {0}", ActualScheduleTime);
                         BestSchedule = ActualSchedule.ToList();//O TO BYŁO CAŁE ZAMIESZANIE
                         BestScheduleTime = ActualScheduleTime;
                         continue;
@@ -321,6 +323,8 @@ namespace scheduing_fs_ts
             }
             Console.WriteLine("Najlepszy: {0}", BestScheduleTime);
             Console.WriteLine("Najlepszy obliczony tutej: {0}", count_time(BestSchedule, form));
+
+            save_schedule(BestSchedule, BestScheduleTime, start_time);
         }
 
 
@@ -329,6 +333,8 @@ namespace scheduing_fs_ts
         {
             int tasks_count;
             int pauses_count;
+
+            loaded_instance_path = path ;
 
             List<Task> loaded_tasks = new List<Task>();
             List<Pause> loaded_pauses = new List<Pause>();
@@ -379,6 +385,7 @@ namespace scheduing_fs_ts
 
         public void save(string path)
         {
+            path += ".txt";
             StreamWriter sr = new StreamWriter(path);
             sr.WriteLine("***{0}***", instance_nO); //tu numer instancj8i zrob PIt
             instance_nO++;
@@ -402,12 +409,28 @@ namespace scheduing_fs_ts
             sr.Close();
         }
 
-        public void save_schedule(List<Task> Result)
+        public void save_schedule(List<Task> Result, int best_time, int start_schedule)
         {
-            int all_idles = 0 ;
-            bool idle = false;
-            int idle_time=0, idle_start;
-            int idle_id = 0;
+            string path = loaded_instance_path.Remove(loaded_instance_path.Length - 4);
+            path += "_result.txt";
+
+            Console.WriteLine("Zapis w {0}", path);
+
+            StreamWriter Sr = new StreamWriter(path);
+            Sr.WriteLine(loaded_instance_id);
+            Sr.WriteLine("{0},{1}", best_time, start_schedule);
+            Sr.Write("M1:");
+            int all_idles_m1 = 0;// idle_count = 0 ;
+            int all_maints=0;
+            int maints_counter=0;
+            bool idle_m1 = false;
+            int idle_time_m1=0, idle_start_m1=0;
+            int idle_id_m1 = 0;
+
+            int all_idles_m2 = 0, idle_count_m2 = 0;
+            //int idle_start_m2, idle_time_m2;
+            int idle_id_m2 = 0;
+
             int m1_time = 0;
             int m2_time = 0;
             List<Task> copy = Result.ToList();
@@ -436,13 +459,13 @@ namespace scheduing_fs_ts
                             if (copy[i].start <= m1_time && end_op1[i] == 0)
                             {
                                 //int p_counter = 0;
-                                if(idle)
+                                if(idle_m1)
                                 {
-                                    Console.Write("idle{0}_M1,{1},{2};", idle_id, idle_start, idle_time);
-                                    idle_id++;
-                                    all_idles += idle_time;
-                                    idle_time = 0;
-                                    idle = false;
+                                    idle_id_m1++;
+                                    Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
+                                    all_idles_m1 += idle_time_m1;
+                                    idle_time_m1 = 0;
+                                    idle_m1 = false;
                                 }
 
                                 for (int p = 0; p < SortedPauses.Count; p++)
@@ -457,62 +480,66 @@ namespace scheduing_fs_ts
                                         int before_pause = SortedPauses[p].p_start - m1_time;
                                         if (multipause)
                                         {
-                                            idle_start = m1_time - before_pause;
-                                            idle_time = before_pause;
-                                            Console.Write("idle{0}_M1,{1},{2};", idle_id, idle_start, idle_time);
-                                            idle_id++;
-                                            all_idles += idle_time;
-                                            idle_time = 0;
+                                            idle_start_m1 = m1_time - before_pause;
+                                            idle_time_m1 = before_pause;
+                                            idle_id_m1++;
+                                            Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
+                                            all_idles_m1 += idle_time_m1;
+                                            idle_time_m1 = 0;
                                         }
 
                                         m1_time += before_pause + SortedPauses[p].p_duration;//+ copy[i].duration_op1;
 
-                                        if (idle)
+                                        if (idle_m1)
                                         {
-                                            Console.Write("idle{0}_M1,{1},{2};", idle_id, idle_start, idle_time);
-                                            idle_id++;
-                                            all_idles += idle_time;
-                                            idle_time = 0;
-                                            idle = false;
+                                            idle_id_m1++;
+                                            Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
+                                            all_idles_m1 += idle_time_m1;
+                                            idle_time_m1 = 0;
+                                            idle_m1 = false;
                                         }
                                         multipause = true;
-                                        Console.Write("maint{0}_M1,{1},{2}", SortedPauses[p].p_start, SortedPauses[p].p_duration);
+                                        //Console.Write("maint{0}_M1,{1},{2}", SortedPauses[p].p_id , SortedPauses[p].p_start, SortedPauses[p].p_duration);
+                                        Sr.Write("maint{0}_M1,{1},{2};", SortedPauses[p].p_id, SortedPauses[p].p_start, SortedPauses[p].p_duration);
+                                        all_maints += SortedPauses[p].p_duration;
+                                        maints_counter++;
 
                                     }
 
                                 }
-                                if (idle)
+                                if (idle_m1)
                                 {
-                                    Console.Write("idle{0}_M1,{1},{2};", idle_id, idle_start, idle_time);
-                                    idle_id++;
-                                    all_idles += idle_time;
-                                    idle_time = 0;
-                                    idle = false;
+                                    idle_id_m1++;
+                                    Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
+                                    all_idles_m1 += idle_time_m1;
+                                    idle_time_m1 = 0;
+                                    idle_m1 = false;
                                 }
-                                Console.Write("op1_{0}_M1,{1},{2}",copy[i].id, m1_time, copy[i].duration_op1);
+                                Sr.Write("op1_{0}_M1,{1},{2};",copy[i].id, m1_time, copy[i].duration_op1);
                                 m1_time += copy[i].duration_op1;
                                 end_op1[i] = m1_time;
                                 //break;
                             }
                             else
                             {
-                                if(idle)
+                                if(idle_m1)
                                 {
-                                    idle_time++;
+                                    idle_time_m1++;
                                 }
                                 else
                                 {
-                                    idle = true;
-                                    idle_start = m1_time;
-                                    idle_time++;
+                                    idle_m1 = true;
+                                    idle_start_m1 = m1_time;
+                                    idle_time_m1++;
                                 }
                                 m1_time++;
 
                             }
                         }
                     }
-
-
+                    Sr.Write(Environment.NewLine);
+                    Sr.Write("M2:");
+                    
 
                     for (int j = 0; j < copy.Count; j++)//tu trzeba wypiswanie idli i tasków zrobić
                     {
@@ -527,13 +554,19 @@ namespace scheduing_fs_ts
                                 if (end_op2[j - 1] >= end_op1[j])
                                 {
                                     m2_time = end_op2[j - 1];
+                                    Sr.Write("op2_{0}_M2,{1},{2};", copy[j].id, m2_time, copy[j].duration_op2);
                                     m2_time += copy[j].duration_op2;
                                     end_op2[j] = m2_time;
                                 }
 
                                 else if (end_op1[j] > end_op2[j - 1])
                                 {
+                                    idle_id_m2++;
+                                    Sr.Write("idle{0}_M2,{1},{2};", idle_id_m2, end_op2[j - 1], end_op1[j] - end_op2[j - 1]);
+                                    all_idles_m2 += end_op1[j] - end_op2[j - 1];
+
                                     m2_time = end_op1[j];
+                                    Sr.Write("op2_{0}_M2,{1},{2};", copy[j].id, m2_time, copy[j].duration_op2);
                                     m2_time += copy[j].duration_op2;
                                     end_op2[j] = m2_time;
                                 }
@@ -544,7 +577,15 @@ namespace scheduing_fs_ts
                             if (end_op1[0] != 0)
                             {
                                 m2_time = end_op1[0];
+                                if(m2_time >0)
+                                {
+                                    idle_id_m2++;
+                                    Sr.Write("idle{0}_M2,{1},{2};", idle_id_m2, 0, idle_time_m1, m2_time);
+                                    all_idles_m2 += m2_time;
+                                }
+                                Sr.Write("op2_{0}_M2,{1},{2};", copy[j].id, m2_time, copy[j].duration_op2);
                                 m2_time += copy[0].duration_op2;
+                                
                                 end_op2[0] = m2_time;
                             }
 
@@ -558,6 +599,13 @@ namespace scheduing_fs_ts
 
                 }
             }
+            Sr.Write(Environment.NewLine);
+            Sr.WriteLine("{0},{1} mints", maints_counter, all_maints);
+            Sr.WriteLine("0,0");
+            Sr.WriteLine("{0},{1} idles1", idle_id_m1 ,all_idles_m1);
+            Sr.WriteLine("{0},{1} idles2", idle_id_m2, all_idles_m2);
+            Sr.WriteLine("***EOF***");
+            Sr.Close();
 
         }
 
