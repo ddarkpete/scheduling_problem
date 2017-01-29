@@ -404,7 +404,160 @@ namespace scheduing_fs_ts
 
         public void save_schedule(List<Task> Result)
         {
+            int all_idles = 0 ;
+            bool idle = false;
+            int idle_time=0, idle_start;
+            int idle_id = 0;
+            int m1_time = 0;
+            int m2_time = 0;
+            List<Task> copy = Result.ToList();
+            List<int> end_op1 = new List<int>();
+            List<int> end_op2 = new List<int>();
+            //List<bool> scheduled_op1
+            for (int i = 0; i < Result.Count; i++)
+            {
+                end_op1.Add(0);
+                end_op2.Add(0);
+            }
+            bool scheduled = false;
+            while (scheduled == false)
+            {
 
+                if (end_op1.Contains(0))
+                {
+
+
+
+                    for (int i = 0; i < copy.Count; i++)
+                    {
+                        while (end_op1[i] == 0)
+                        {
+
+                            if (copy[i].start <= m1_time && end_op1[i] == 0)
+                            {
+                                //int p_counter = 0;
+                                if(idle)
+                                {
+                                    Console.Write("idle{0}_M1,{1},{2};", idle_id, idle_start, idle_time);
+                                    idle_id++;
+                                    all_idles += idle_time;
+                                    idle_time = 0;
+                                    idle = false;
+                                }
+
+                                for (int p = 0; p < SortedPauses.Count; p++)
+                                {
+                                    bool multipause = false;
+                                    if (m1_time <= SortedPauses[p].p_start && SortedPauses[p].p_start < (m1_time + copy[i].duration_op1))
+                                    {
+                                        if(multipause)
+                                        {
+
+                                        }
+                                        int before_pause = SortedPauses[p].p_start - m1_time;
+                                        if (multipause)
+                                        {
+                                            idle_start = m1_time - before_pause;
+                                            idle_time = before_pause;
+                                            Console.Write("idle{0}_M1,{1},{2};", idle_id, idle_start, idle_time);
+                                            idle_id++;
+                                            all_idles += idle_time;
+                                            idle_time = 0;
+                                        }
+
+                                        m1_time += before_pause + SortedPauses[p].p_duration;//+ copy[i].duration_op1;
+
+                                        if (idle)
+                                        {
+                                            Console.Write("idle{0}_M1,{1},{2};", idle_id, idle_start, idle_time);
+                                            idle_id++;
+                                            all_idles += idle_time;
+                                            idle_time = 0;
+                                            idle = false;
+                                        }
+                                        multipause = true;
+                                        Console.Write("maint{0}_M1,{1},{2}", SortedPauses[p].p_start, SortedPauses[p].p_duration);
+
+                                    }
+
+                                }
+                                if (idle)
+                                {
+                                    Console.Write("idle{0}_M1,{1},{2};", idle_id, idle_start, idle_time);
+                                    idle_id++;
+                                    all_idles += idle_time;
+                                    idle_time = 0;
+                                    idle = false;
+                                }
+                                Console.Write("op1_{0}_M1,{1},{2}",copy[i].id, m1_time, copy[i].duration_op1);
+                                m1_time += copy[i].duration_op1;
+                                end_op1[i] = m1_time;
+                                //break;
+                            }
+                            else
+                            {
+                                if(idle)
+                                {
+                                    idle_time++;
+                                }
+                                else
+                                {
+                                    idle = true;
+                                    idle_start = m1_time;
+                                    idle_time++;
+                                }
+                                m1_time++;
+
+                            }
+                        }
+                    }
+
+
+
+                    for (int j = 0; j < copy.Count; j++)//tu trzeba wypiswanie idli i tasków zrobić
+                    {
+
+
+                        if (j > 0)
+                        {
+                            if (end_op1[j] != 0 && end_op2[j - 1] != 0)
+                            {
+
+
+                                if (end_op2[j - 1] >= end_op1[j])
+                                {
+                                    m2_time = end_op2[j - 1];
+                                    m2_time += copy[j].duration_op2;
+                                    end_op2[j] = m2_time;
+                                }
+
+                                else if (end_op1[j] > end_op2[j - 1])
+                                {
+                                    m2_time = end_op1[j];
+                                    m2_time += copy[j].duration_op2;
+                                    end_op2[j] = m2_time;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (end_op1[0] != 0)
+                            {
+                                m2_time = end_op1[0];
+                                m2_time += copy[0].duration_op2;
+                                end_op2[0] = m2_time;
+                            }
+
+                        }
+                    }
+
+                }
+                else
+                {
+                    scheduled = true;
+
+                }
+            }
 
         }
 
