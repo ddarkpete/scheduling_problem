@@ -224,7 +224,7 @@ namespace scheduing_fs_ts
             List<TabuChange> TabuChanges = new List<TabuChange>();
 
             Console.WriteLine("Wyszukiwanie...");
-            for (int i = 0; i < ScheduledTasks.Count*50; i++)
+            for (int i = 0; i < ScheduledTasks.Count*10; i++)
             {
                 bool LocalMin = false;
                 int BadChanges = 0;

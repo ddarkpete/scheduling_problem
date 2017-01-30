@@ -85,8 +85,12 @@ namespace scheduing_fs_ts
 
         private void tabu_button_Click(object sender, EventArgs e)
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             tabu_button.Enabled = false;
             Backend.Instance.tabu(this);
+            watch.Stop();
+            double elapsedMs = watch.ElapsedMilliseconds;
+            textBox2.Text += elapsedMs/1000;
             Backend.Instance.ScheduledTasks.Clear();
             Backend.Instance.SortedPauses.Clear();
             Backend.Instance.Tasks.Clear();
