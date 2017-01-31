@@ -224,7 +224,7 @@ namespace scheduing_fs_ts
             List<TabuChange> TabuChanges = new List<TabuChange>();
 
             Console.WriteLine("Wyszukiwanie...");
-            for (int i = 0; i < ScheduledTasks.Count*10; i++)
+            for (int i = 0; i < ScheduledTasks.Count*30; i++)
             {
                 bool LocalMin = false;
                 int BadChanges = 0;
@@ -323,7 +323,7 @@ namespace scheduing_fs_ts
             }
             Console.WriteLine("Najlepszy: {0}", BestScheduleTime);
             Console.WriteLine("Najlepszy obliczony tutej: {0}", count_time(BestSchedule, form));
-
+            form.textBox3.Text =BestScheduleTime.ToString();
             save_schedule(BestSchedule, BestScheduleTime, start_time);
         }
 

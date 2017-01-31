@@ -90,7 +90,8 @@ namespace scheduing_fs_ts
             Backend.Instance.tabu(this);
             watch.Stop();
             double elapsedMs = watch.ElapsedMilliseconds;
-            textBox2.Text += elapsedMs/1000+ " s";
+            textBox2.Text= elapsedMs/1000+ " s";
+           
             Backend.Instance.ScheduledTasks.Clear();
             Backend.Instance.SortedPauses.Clear();
             Backend.Instance.Tasks.Clear();
@@ -98,6 +99,11 @@ namespace scheduing_fs_ts
             Backend.Instance.time_mach1 = 0;
             Backend.Instance.time_mach2 = 0;
             tabu_button.Enabled = true;
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
 
         }
     }
