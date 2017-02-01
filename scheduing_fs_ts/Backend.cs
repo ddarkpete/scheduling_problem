@@ -202,9 +202,10 @@ namespace scheduing_fs_ts
                   
                 }
             }
+            int total_end_time = end_op1.Sum() + end_op2.Sum();
            
             formobject.taskBox.Text += "Total time: " + m2_time + System.Environment.NewLine;
-            return m2_time;
+            return total_end_time;
         }
 
         public void tabu(Form1 form)
