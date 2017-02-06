@@ -58,8 +58,8 @@ namespace scheduing_fs_ts
                 }
                 else
                 {
-                    New_task.duration_op1 = rnd.Next(1, 50);
-                    New_task.duration_op2 = rnd.Next(1, 50);
+                    New_task.duration_op1 = rnd.Next(1, 200);
+                    New_task.duration_op2 = rnd.Next(1, 200);
                     
                 }
 
@@ -152,6 +152,7 @@ namespace scheduing_fs_ts
                             }
                             else
                             {
+                                //Console.WriteLine("**");
                                 m1_time++;
 
                             }
@@ -225,7 +226,7 @@ namespace scheduing_fs_ts
             List<TabuChange> TabuChanges = new List<TabuChange>();
 
             Console.WriteLine("Wyszukiwanie...");
-            for (int i = 0; i < ScheduledTasks.Count*30; i++)
+            for (int i = 0; i < 650; i++)
             {
                 bool LocalMin = false;
                 int BadChanges = 0;
@@ -464,37 +465,48 @@ namespace scheduing_fs_ts
                                 {
                                     idle_id_m1++;
                                     Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
+                                    idle_id_m1++;
                                     all_idles_m1 += idle_time_m1;
                                     idle_time_m1 = 0;
                                     idle_m1 = false;
                                 }
-
+                                int pcounter = 0;
                                 for (int p = 0; p < SortedPauses.Count; p++)
                                 {
                                     bool multipause = false;
                                     if (m1_time <= SortedPauses[p].p_start && SortedPauses[p].p_start < (m1_time + copy[i].duration_op1))
                                     {
-                                        if(multipause)
-                                        {
-
-                                        }
+                                        pcounter++;
                                         int before_pause = SortedPauses[p].p_start - m1_time;
                                         if (multipause)
+                                        {
+                                            Console.WriteLine("dupa");
+                                            idle_start_m1 = m1_time - before_pause;
+                                            idle_time_m1 = before_pause;
+                                             Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
+                                            idle_id_m1++;
+                                            all_idles_m1 += idle_time_m1;
+                                            idle_time_m1 = 0;
+                                        }
+                                        if(before_pause > 0)
                                         {
                                             idle_start_m1 = m1_time - before_pause;
                                             idle_time_m1 = before_pause;
                                             idle_id_m1++;
-                                            Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
-                                            all_idles_m1 += idle_time_m1;
-                                            idle_time_m1 = 0;
+                                            Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, m1_time, before_pause);
+                                            idle_id_m1++;
+                                            all_idles_m1 += before_pause;
+                                            
                                         }
 
                                         m1_time += before_pause + SortedPauses[p].p_duration;//+ copy[i].duration_op1;
 
                                         if (idle_m1)
                                         {
-                                            idle_id_m1++;
+                                            Console.WriteLine("dupa");
+                                            
                                             Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
+                                            idle_id_m1++;
                                             all_idles_m1 += idle_time_m1;
                                             idle_time_m1 = 0;
                                             idle_m1 = false;
@@ -508,13 +520,22 @@ namespace scheduing_fs_ts
                                     }
 
                                 }
+
                                 if (idle_m1)
                                 {
-                                    idle_id_m1++;
+                                    Console.WriteLine("dupa");
+                                    
                                     Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
+                                    idle_id_m1++;
                                     all_idles_m1 += idle_time_m1;
                                     idle_time_m1 = 0;
                                     idle_m1 = false;
+                                }
+                                if(i > 0 && pcounter == 0 && m1_time > end_op1[i-1])
+                                {
+                                    Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1,end_op1[i-1], m1_time - end_op1[i - 1]);
+                                    idle_id_m1++;
+                                    all_idles_m1 += idle_time_m1;
                                 }
                                 Sr.Write("op1_{0}_M1,{1},{2};",copy[i].id, m1_time, copy[i].duration_op1);
                                 m1_time += copy[i].duration_op1;
@@ -523,12 +544,14 @@ namespace scheduing_fs_ts
                             }
                             else
                             {
-                                if(idle_m1)
+                                //Console.WriteLine("dupa");
+                                if (idle_m1)
                                 {
                                     idle_time_m1++;
                                 }
                                 else
                                 {
+                                    //Console.WriteLine("dupa");
                                     idle_m1 = true;
                                     idle_start_m1 = m1_time;
                                     idle_time_m1++;
