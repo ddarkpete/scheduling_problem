@@ -226,7 +226,7 @@ namespace scheduing_fs_ts
             List<TabuChange> TabuChanges = new List<TabuChange>();
 
             Console.WriteLine("Wyszukiwanie...");
-            for (int i = 0; i < 650; i++)
+            for (int i = 0; i < 650; i++)// TU ZMIENIAJ OD 100-650
             {
                 bool LocalMin = false;
                 int BadChanges = 0;
@@ -298,7 +298,7 @@ namespace scheduing_fs_ts
 
                            
 
-                                if (TabuChanges.Count < 5)// to trzeba zmienic - ilosc elementów tabu
+                                if (TabuChanges.Count < 7)// TU MONIKA ZMIENIAJ NA LICXZBY Z EXCELA
                                 {
                                     TabuChanges.Add(TempChange);
                                 }
