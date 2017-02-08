@@ -152,8 +152,7 @@ namespace scheduing_fs_ts
                             }
                             else
                             {
-                                //Console.WriteLine("**");
-                                m1_time++;
+                                 m1_time++;
 
                             }
                         }
@@ -236,7 +235,6 @@ namespace scheduing_fs_ts
                 {
                     if (BadChanges == 2)//zbyt wiele zlych zmian , trzeba pomieszac kolejnosc
                     {
-                        //Console.WriteLine("BEst na koniec0 {0}", count_time(BestSchedule, form));
                         //Console.WriteLine("Minimum lokalne");
                         List<Task> Randomize = new List<Task>();
                         Randomize = ActualSchedule.OrderBy(item => rnd.Next()).ToList();
@@ -314,17 +312,15 @@ namespace scheduing_fs_ts
                     }
                     else if(ActualScheduleTime < BestScheduleTime)//actual jest lepszy <wow> od najlepszego :OOOO
                     {
-                        //Console.WriteLine("LEPSZY FHUI {0}", ActualScheduleTime);
-                        BestSchedule = ActualSchedule.ToList();//O TO BYŁO CAŁE ZAMIESZANIE
+                        BestSchedule = ActualSchedule.ToList();
                         BestScheduleTime = ActualScheduleTime;
                         continue;
-                       // Console.WriteLine("LEPSZY FHUI bestowy czas {0}",count_time(BestSchedule,form));
                     }
                     
                 }
             }
-            Console.WriteLine("Najlepszy: {0}", BestScheduleTime);
-            Console.WriteLine("Najlepszy obliczony tutej: {0}", count_time(BestSchedule, form));
+            //Console.WriteLine("Najlepszy: {0}", BestScheduleTime);
+            //Console.WriteLine("Najlepszy obliczony tutaj: {0}", count_time(BestSchedule, form));
             form.textBox3.Text =BestScheduleTime.ToString();
             save_schedule(BestSchedule, BestScheduleTime, start_time);
         }
@@ -380,7 +376,7 @@ namespace scheduing_fs_ts
             }
             ScheduledTasks = loaded_tasks;
             SortedPauses = loaded_pauses.OrderBy(o => o.p_start).ToList();
-            System.Console.WriteLine("taski op1 {0}", tasks1);
+            //System.Console.WriteLine("tasks op1 {0}", tasks1);
 
 
         }
@@ -389,7 +385,7 @@ namespace scheduing_fs_ts
         {
             path += ".txt";
             StreamWriter sr = new StreamWriter(path);
-            sr.WriteLine("***{0}***", instance_nO); //tu numer instancj8i zrob PIt
+            sr.WriteLine("***{0}***", instance_nO); 
             instance_nO++;
             sr.WriteLine("{0}", Tasks.Count);
             foreach (Task taskk in Tasks)
@@ -480,7 +476,6 @@ namespace scheduing_fs_ts
                                         int before_pause = SortedPauses[p].p_start - m1_time;
                                         if (multipause)
                                         {
-                                            Console.WriteLine("dupa");
                                             idle_start_m1 = m1_time - before_pause;
                                             idle_time_m1 = before_pause;
                                              Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
@@ -503,8 +498,6 @@ namespace scheduing_fs_ts
 
                                         if (idle_m1)
                                         {
-                                            Console.WriteLine("dupa");
-                                            
                                             Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
                                             idle_id_m1++;
                                             all_idles_m1 += idle_time_m1;
@@ -523,8 +516,6 @@ namespace scheduing_fs_ts
 
                                 if (idle_m1)
                                 {
-                                    Console.WriteLine("dupa");
-                                    
                                     Sr.Write("idle{0}_M1,{1},{2};", idle_id_m1, idle_start_m1, idle_time_m1);
                                     idle_id_m1++;
                                     all_idles_m1 += idle_time_m1;
@@ -544,14 +535,12 @@ namespace scheduing_fs_ts
                             }
                             else
                             {
-                                //Console.WriteLine("dupa");
                                 if (idle_m1)
                                 {
                                     idle_time_m1++;
                                 }
                                 else
                                 {
-                                    //Console.WriteLine("dupa");
                                     idle_m1 = true;
                                     idle_start_m1 = m1_time;
                                     idle_time_m1++;
@@ -565,7 +554,7 @@ namespace scheduing_fs_ts
                     Sr.Write("M2:");
                     
 
-                    for (int j = 0; j < copy.Count; j++)//tu trzeba wypiswanie idli i tasków zrobić
+                    for (int j = 0; j < copy.Count; j++)
                     {
 
 

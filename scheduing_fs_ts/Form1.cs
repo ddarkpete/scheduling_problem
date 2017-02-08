@@ -9,8 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 namespace scheduing_fs_ts
-{//trzeba zapisać instancje do pliku , potem nawet wczytać!
- //w zapisie bug , poprawiony dla taskow poprawic dla pauz
+{
     public partial class Form1 : Form
     {
         
@@ -18,7 +17,7 @@ namespace scheduing_fs_ts
 
         /*
          * 
-         *                         OBSŁUGA ZAPISÓW/WCZYTYWAŃ I OKIENKA
+         *                         FRONTEND
          * 
          * 
          */
@@ -39,17 +38,12 @@ namespace scheduing_fs_ts
             Backend.Instance.pause_generator();
             //Backend.Instance.ScheduledTasks = Backend.Instance.Tasks.OrderBy(o => o.start).ToList();
             //Backend.Instance.SortedPauses = Backend.Instance.Pauses.OrderBy(o => o.p_start).ToList();
-          //  Backend.Instance.count_time(Backend.Instance.SortedTasksglobal, this);// tabu dopisać 
            // Backend.Instance.tabu(this);
             //  System.Console.WriteLine("{0} {1}", pause_instances.Count, task_instances.Count);
             saveFileDialog1.ShowDialog();
            
             textBox1.Text = "";
-            //Backend.Instance.time_mach1 = 0;
-            //Backend.Instance.time_mach2 = 0;
-            //a to nie powinno być przy wprowadzaniu pliku instancji? czy za jednym zamachem generujemy ,
-            //rozwiazujemy i tworzymy plik instancji oraz rozwiązania? chyba powinno być wczytanie instancji tez
-            //zeby dr Radom mogl sprawdzic to
+           
         }
 
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
